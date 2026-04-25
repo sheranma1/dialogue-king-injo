@@ -145,9 +145,9 @@ body {
 }
 
 .character.active {
-    filter: grayscale(0) brightness(1.1) drop-shadow(0 0 20px rgba(212,175,55,0.4));
-    transform: translateZ(50px) translateY(-30px) scale(1.15);
-    z-index: 50;
+    filter: var(--char-filter, none) brightness(1.2) drop-shadow(0 0 30px rgba(255,215,0,0.6));
+    transform: translateZ(100px) translateY(-50px) scale(1.6);
+    z-index: 100;
 }
 
 .silhouette {
@@ -157,14 +157,15 @@ body {
 }
 
 .king-sil {
-    background-image: url('pixel_king.png');
+    background-image: var(--bg-img, url('pixel_king.png'));
     width: 320px;
     height: 320px;
     image-rendering: pixelated;
 }
 
 .min-sil {
-    background-image: url('pixel_minister.png');
+    background-image: var(--bg-img, url('pixel_minister.png'));
+    filter: var(--char-filter, none);
     width: 140px;
     height: 140px;
     image-rendering: pixelated;

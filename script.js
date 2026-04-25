@@ -36,17 +36,37 @@ const dialogue = [
     { speaker: "楘", text: "三代以後，承統有序，若遽行權道，則必有大患矣。", mood: 100, stance: -20 }
 ];
 
-const ministersList = ["瑬", "瑞鳳", "悦", "自點", "敬輿", "德泂", "仁垕", "時白", "景奭", "植", "壽賢", "堉", "太和", "楘"];
+const ministersData = {
+    "瑬": { img: 'pixel_minister_old.png', filter: 'hue-rotate(0deg)' },
+    "瑞鳳": { img: 'pixel_minister.png', filter: 'hue-rotate(90deg)' }, // Greenish
+    "悦": { img: 'pixel_minister.png', filter: 'hue-rotate(0deg)' }, // Standard Blue
+    "自點": { img: 'pixel_minister.png', filter: 'hue-rotate(180deg) saturate(1.5)' }, // Reddish
+    "敬輿": { img: 'pixel_minister_old.png', filter: 'hue-rotate(45deg) brightness(0.8)' }, // Darker
+    "德泂": { img: 'pixel_minister.png', filter: 'hue-rotate(240deg)' }, // Purple
+    "仁垕": { img: 'pixel_minister.png', filter: 'contrast(1.5) brightness(1.2)' }, // Vibrant
+    "時白": { img: 'pixel_minister_old.png', filter: 'sepia(0.5) hue-rotate(-30deg)' }, // Brownish
+    "景奭": { img: 'pixel_minister.png', filter: 'grayscale(0.5) brightness(0.7)' }, // Faded
+    "植": { img: 'pixel_minister_old.png', filter: 'hue-rotate(300deg)' }, // Magenta-ish
+    "壽賢": { img: 'pixel_minister.png', filter: 'invert(0.1) hue-rotate(120deg)' }, // Teal
+    "堉": { img: 'pixel_minister_old.png', filter: 'brightness(1.3) contrast(1.2)' }, // High-key
+    "太和": { img: 'pixel_minister.png', filter: 'hue-rotate(60deg) saturate(0.5)' }, // Olive
+    "楘": { img: 'pixel_minister_old.png', filter: 'hue-rotate(200deg) brightness(0.6)' } // Deep Blue
+};
+
+const ministersList = Object.keys(ministersData);
 let currentIndex = -1;
 let currentStanceBalance = 50; 
 
 function init() {
     const container = document.getElementById('ministers-container');
     ministersList.forEach((name, index) => {
+        const data = ministersData[name];
         const div = document.createElement('div');
         div.className = 'character minister';
         div.id = `char-${name}`;
-        div.style.animationDelay = (0.1 * index) + 's';
+        div.style.setProperty('--bg-img', `url('${data.img}')`);
+        div.style.setProperty('--char-filter', data.filter);
+        div.style.animationDelay = (0.05 * index) + 's';
         div.innerHTML = `
             <div class="silhouette min-sil"></div>
             <div class="name-tag">${name}</div>
