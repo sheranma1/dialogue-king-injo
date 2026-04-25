@@ -3,71 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 百科全書版</title>
+    <title>朝廷爭議 V2 - 晨曦明堂版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --king-red: #c0392b;
-            --gold: #d4af37;
-            --ink-black: #0a0a0a;
-            --paper-white: #f4f1ea;
-            --a-color: #ffd700;
-            --b-color: #2e86de;
-            --c-color: #95a5a6;
+            --gold: #8e6d11; /* 深金色，在亮色背景下更顯眼 */
+            --ink-black: #1a1a1a;
+            --paper-white: #fcfaf2; /* 宣紙色 */
+            --a-color: #b8860b;
+            --b-color: #2980b9;
+            --c-color: #7f8c8d;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--ink-black); color: var(--paper-white); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
+        body { background: var(--paper-white); color: var(--ink-black); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
         #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
-        .palace-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #2c0a0a 0%, #000 100%); z-index: -2; }
+        /* 亮色漸變背景 */
+        .palace-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #fff 0%, #fcfaf2 50%, #e8e3d3 100%); z-index: -2; }
+        .palace-bg::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://www.transparenttextures.com/patterns/handmade-paper.png'); opacity: 0.3; z-index: -1; }
 
-        .status-bar { height: 60px; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--gold); padding: 0 20px; z-index: 1000; }
-        .stance-container { width: 50%; height: 16px; background: #000; border: 1px solid var(--gold); display: flex; border-radius: 8px; overflow: hidden; }
+        .status-bar { height: 60px; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--gold); padding: 0 20px; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stance-container { width: 50%; height: 16px; background: #eee; border: 1px solid var(--gold); display: flex; border-radius: 8px; overflow: hidden; }
         .stance { transition: width 0.8s ease; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: white; }
         .traditionalists { background: var(--b-color); }
         .reformists { background: #e74c3c; }
 
         .court-layout { flex: 1; display: flex; flex-direction: column; padding: 10px; position: relative; }
-        .king-throne { height: 35%; display: flex; justify-content: center; align-items: center; }
+        .king-throne { height: 35%; display: flex; justify-content: center; align-items: center; gap: 20px; }
         
         .ministers-floor { height: 35%; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 20px; }
         .minister-wing { display: flex; gap: 8px; position: relative; min-width: 150px; justify-content: center; padding-bottom: 10px; }
         .wing-label { position: absolute; top: -35px; width: 100%; text-align: center; font-size: 1.1rem; font-weight: 900; color: var(--gold); letter-spacing: 2px; }
         
-        .character { display: flex; flex-direction: column; align-items: center; transition: all 0.4s ease; filter: grayscale(0.5) brightness(0.6); }
-        .character.active { filter: grayscale(0) brightness(1.2) drop-shadow(0 0 15px var(--gold)); transform: scale(1.3) translateY(-15px); z-index: 100; }
+        .character { display: flex; flex-direction: column; align-items: center; transition: all 0.4s ease; filter: grayscale(0.2) brightness(0.9); }
+        .character.active { filter: grayscale(0) brightness(1.1) drop-shadow(0 0 20px rgba(142,109,17,0.4)); transform: scale(1.15) translateY(-10px); z-index: 100; }
         .silhouette { background-image: url('characters_sheet.png'); background-size: 900% 200%; background-repeat: no-repeat; image-rendering: pixelated; }
         
-        /* 恢復全身像比例 */
         .king-sil { background-position: 0% 0%; width: 140px; height: 220px; }
-        .bongnim-sil { 
-            background-image: url('bongnim.png'); 
-            background-size: contain; 
-            background-repeat: no-repeat;
-            width: 120px; height: 180px; 
-        }
+        .bongnim-sil { background-image: url('bongnim.png'); background-size: contain; background-repeat: no-repeat; width: 120px; height: 180px; }
         .min-sil { background-position: var(--pos-x, 0%) var(--pos-y, 0%); width: 110px; height: 180px; clip-path: inset(0 0 15% 0); }
-        .name-tag { margin-top: 4px; font-size: 10px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 1px 4px; }
+        .name-tag { margin-top: 4px; font-size: 10px; background: rgba(255,255,255,0.9); border: 1px solid var(--gold); color: var(--gold); padding: 1px 4px; font-weight: 700; }
 
         .dialogue-center { height: 30%; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; }
-        .dialogue-box { width: 95%; max-width: 900px; background: rgba(5, 5, 5, 0.95); border: 2px solid var(--gold); padding: 20px 40px; border-radius: 12px; cursor: pointer; text-align: center; }
+        .dialogue-box { width: 95%; max-width: 900px; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--gold); padding: 20px 40px; border-radius: 12px; cursor: pointer; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .speaker-name { color: var(--gold); font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; }
-        .speech-text { font-size: 1.8rem; line-height: 1.4; color: #fff; font-weight: 500; }
+        .speech-text { font-size: 1.8rem; line-height: 1.4; color: var(--ink-black); font-weight: 500; }
+        .click-hint { font-size: 11px; color: var(--gold); opacity: 0.6; margin-top: 10px; }
 
-        /* 人物百科詞條樣式 */
-        .term { color: var(--gold); font-weight: 900; text-decoration: underline dashed; cursor: help; transition: color 0.3s; }
-        .term:hover { color: #fff; background: rgba(212,175,55,0.2); }
+        .term { color: var(--gold); font-weight: 900; text-decoration: underline dashed; cursor: help; border-bottom: 1px solid var(--gold); }
+        .term:hover { background: rgba(142,109,17,0.1); color: #000; }
 
-        /* 百科彈窗 */
+        /* 亮色百科彈窗 */
         #wiki-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 500px; background: #111; border: 3px solid var(--gold);
+            width: 500px; background: #fff; border: 4px solid var(--gold);
             padding: 30px; border-radius: 15px; z-index: 5000;
-            display: none; box-shadow: 0 0 100px rgba(0,0,0,1);
+            display: none; box-shadow: 0 0 50px rgba(0,0,0,0.2);
+            background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
         }
-        #wiki-modal h2 { color: var(--gold); margin-bottom: 15px; border-bottom: 1px solid var(--gold); padding-bottom: 10px; }
-        #wiki-modal p { line-height: 1.6; color: #ccc; font-size: 1.1rem; }
-        #wiki-close { margin-top: 20px; background: var(--gold); color: #000; border: none; padding: 5px 15px; cursor: pointer; font-weight: 900; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 4999; display: none; }
+        #wiki-modal h2 { color: var(--gold); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; font-weight: 900; }
+        #wiki-modal p { line-height: 1.6; color: #444; font-size: 1.1rem; }
+        #wiki-close { margin-top: 20px; background: var(--gold); color: #fff; border: none; padding: 8px 20px; cursor: pointer; font-weight: 900; border-radius: 5px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 4999; display: none; }
 
         @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-2px, 2px); } 100% { transform: translate(1px, -1px); } }
         .shake { animation: shake 0.2s infinite; }
@@ -88,8 +85,7 @@
                     <div class="silhouette king-sil"></div>
                     <div class="name-tag">上 (仁祖)</div>
                 </div>
-                <!-- 鳳林大君站位 -->
-                <div class="character bongnim" id="char-bongnim" style="margin-top: 50px; margin-left: 20px;">
+                <div class="character bongnim" id="char-bongnim" style="margin-top: 40px;">
                     <div class="silhouette bongnim-sil"></div>
                     <div class="name-tag">鳳林大君</div>
                 </div>
@@ -149,7 +145,7 @@
             { speaker: "瑬", text: "當世祖之世，國家無事，而有此反常之擧，此蓋出於擇賢耶？", mood: 90, stance: -5 },
             { speaker: "上", text: "世祖朝事，多危疑，故必欲立長君。予亦豈不知循序之爲至順也？第惟今日之勢，必須國有長君，然後可以保宗社之重也。", mood: 100, stance: 20 },
             { speaker: "德泂", text: "臣之意，亦以瑞鳳之言爲然也。", mood: 100, stance: -5 },
-            { speaker: "仁垕", text: "殿下之意，爲宗社之大計，惟在聖斷耳。", mood: 95, stance: 15 },
+            { speaker: "仁垕", text: "殿下之意，為宗社之大計，惟在聖斷耳。", mood: 95, stance: 15 },
             { speaker: "時白", text: "洪、李二大臣之言，俱是經常之道，臣則以兩臣之意爲然也。", mood: 95, stance: -10 },
             { speaker: "景奭", text: "若一行處變之擧，而反致四方之疑惑，則雖以利害言之，亦不知其可也。", mood: 100, stance: -10 },
             { speaker: "植", text: "書生之見，只守常道，寧知權變？", mood: 100, stance: -10 },
@@ -248,20 +244,9 @@
             if (entry.speaker === "上") document.getElementById('char-king').classList.add('active');
             else if (ministersData[entry.speaker]) document.getElementById(`char-${entry.speaker}`).classList.add('active');
             
-            // 鳳林大君聯動：提到他時高亮
             if (entry.text.includes("鳳林大君") || entry.text.includes("大君") || entry.text.includes("擇立")) {
                 document.getElementById('char-bongnim').classList.add('active');
             }
-            
-            const moodFill = document.getElementById('mood-fill');
-            if (moodFill) moodFill.style.width = (entry.mood || 0) + '%';
-            
-            currentStanceBalance += (entry.stance || 0);
-            currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
-            const barTrad = document.getElementById('bar-traditional');
-            const barRef = document.getElementById('bar-reform');
-            if (barTrad) barTrad.style.width = (100 - currentStanceBalance) + '%';
-            if (barRef) barRef.style.width = currentStanceBalance + '%';
         }
         window.onload = init;
     </script>
