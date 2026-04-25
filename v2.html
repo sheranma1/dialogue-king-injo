@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 完整交互版</title>
+    <title>朝廷爭議 V2 - 完美視角版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -38,21 +38,36 @@
         .reformists { background: #e74c3c; }
 
         .court-layout { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 20px; }
-        .royal-row { display: flex; justify-content: center; align-items: center; gap: 40px; height: 160px; }
+        
+        /* 皇室成員：140px */
+        .royal-row { display: flex; justify-content: center; align-items: center; gap: 40px; height: 180px; }
         .avatar-container { display: flex; flex-direction: column; align-items: center; gap: 10px; transition: all 0.2s; }
-        .avatar-circle { width: 90px; height: 90px; border-radius: 50%; background: #fff; border: 3px solid #ddd; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .royal .avatar-circle { width: 120px; height: 120px; border-width: 5px; border-color: var(--royal-gold); }
+        .avatar-circle { width: 105px; height: 105px; border-radius: 50%; background: #fff; border: 3px solid #ddd; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+        .royal .avatar-circle { width: 140px; height: 140px; border-width: 5px; border-color: var(--royal-gold); }
         .character.active .avatar-circle { transform: scale(1.1); border-color: var(--royal-gold); box-shadow: 0 0 30px rgba(243,156,18,0.5); }
         
-        .avatar-img { width: 100%; height: 100%; background-image: url('characters_sheet.png'); background-size: 900% 200%; transform: scale(2.2) translateY(15px); }
-        .avatar-img.bongnim { background-image: url('bongnim.png'); background-size: cover; transform: scale(1.1) translateY(5px); }
-        .avatar-img.inpyeong { background-image: url('inpyeong.png'); background-size: cover; transform: scale(1.1) translateY(5px); }
-        .name-tag { font-size: 14px; font-weight: 900; background: #eee; padding: 2px 12px; border-radius: 12px; }
+        /* 圖集頭像對齊邏輯：稍微向右偏移並縮放 */
+        .avatar-img { 
+            width: 100%; height: 100%; 
+            background-image: url('characters_sheet.png'); 
+            background-size: 900% 200%; 
+            transform: scale(2.2) translate(5%, 15%); /* 向右修正 5%，向下 15% */
+            image-rendering: auto;
+        }
 
+        /* 單張圖片對齊邏輯：直接 Cover 居中 */
+        .avatar-img.standalone {
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.1) translateY(5%);
+        }
+
+        .name-tag { font-size: 16px; font-weight: 900; background: #eee; padding: 3px 15px; border-radius: 12px; border: 1px solid #ddd; }
+
+        /* 大臣區域：105px */
         .ministers-floor { display: flex; justify-content: space-around; flex: 1; }
         .minister-group { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1; }
-        .avatars-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-        .minister .avatar-circle { width: 85px; height: 85px; }
+        .avatars-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
 
         .dialogue-center { height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; gap: 10px; }
         .dialogue-box { width: 100%; max-width: 900px; background: rgba(255,255,255,0.95); border-radius: 15px; padding: 25px 50px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); border: 4px solid #444; cursor: pointer; text-align: left; position: relative; }
@@ -62,7 +77,6 @@
         .controls { display: flex; gap: 20px; width: 100%; max-width: 900px; justify-content: flex-end; }
         .btn-control { background: #444; color: #fff; border: none; padding: 8px 25px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); transition: transform 0.1s; }
         .btn-control:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--gold); }
-        .btn-control:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .term { color: var(--royal-gold); border-bottom: 2px solid var(--royal-gold); cursor: help; }
         #wiki-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 450px; background: #fff; border-radius: 20px; padding: 35px; border: 4px solid var(--gold); z-index: 20000; display: none; }
@@ -84,8 +98,8 @@
         <main class="court-layout" id="main-stage">
             <div class="royal-row">
                 <div class="character royal" id="char-king"><div class="avatar-circle"><div class="avatar-img" style="background-position: 0% 0%;"></div></div><div class="name-tag">仁祖</div></div>
-                <div class="character royal" id="char-bongnim"><div class="avatar-circle"><div class="avatar-img bongnim"></div></div><div class="name-tag">鳳林大君</div></div>
-                <div class="character royal" id="char-inpyeong"><div class="avatar-circle"><div class="avatar-img inpyeong"></div></div><div class="name-tag">麟坪大君</div></div>
+                <div class="character royal" id="char-bongnim"><div class="avatar-circle"><div class="avatar-img standalone" style="background-image: url('bongnim.png');"></div></div><div class="name-tag">鳳林大君</div></div>
+                <div class="character royal" id="char-inpyeong"><div class="avatar-circle"><div class="avatar-img standalone" style="background-image: url('inpyeong.png');"></div></div><div class="name-tag">麟坪大君</div></div>
                 <div class="character royal" id="char-sesun"><div class="avatar-circle"><div class="avatar-img" style="background-position: 25% 100%;"></div></div><div class="name-tag">世孫</div></div>
             </div>
 
@@ -98,7 +112,7 @@
             <div class="dialogue-center">
                 <section class="dialogue-box" id="dialogue-box">
                     <div class="speaker-box" id="speaker">宮廷史官</div>
-                    <div class="speech-text" id="speech">點擊屏幕或按空格鍵開始。</div>
+                    <div class="speech-text" id="speech">點擊屏幕或按空格鍵開始這場對峙。</div>
                 </section>
                 <div class="controls">
                     <button class="btn-control" id="btn-prev" disabled>◀ 回退 (Back)</button>
@@ -129,14 +143,14 @@
             { speaker: "上", text: "非徒疾病如此，國事日阽於艱危，脱有不諱，幼沖之主恐不能擔當大器。予欲於大君中擇立爾。", special: "speed" },
             { speaker: "瑬", text: "今此下教，雖出於爲宗社之大計，而臣等惶惑不知所言，宜博詢諸臣。" },
             { speaker: "瑞鳳", text: "考諸往牒，太子不在，繼以太孫，此乃不易之常經。反常行權，恐非國家之福。", special: "objection" },
-            { speaker: "上", text: "雖在治平之世，必以國有長君爲福，况今日乎？" },
-            { speaker: "悦", text: "瑞鳳之言，正合臣意。殿下雖有微恙，春秋鼎盛，元孫雖曰微弱，已至十歲。自古幼主之繼緒者何限？宗統甚重，恐不可輕議也。" },
+            { speaker: "上", text: "雖在治平之世，必以國有長君爲福，況今日乎？" },
+            { speaker: "悦", text: "瑞鳳之言，正合臣意。殿下雖有微恙，春秋鼎盛，元孫雖曰微弱，已至十歲。宗統甚重，恐不可輕議也。" },
             { speaker: "自點", text: "殿下以疾病之未平、時事之艱虞，爲宗社、生民之大計，而發此言，宜更詢于諸臣而決之。" },
             { speaker: "敬輿", text: "臣之愚見，與瑞鳳無異。世嫡承統，今古之常經，常經之外更無所陳。大抵能守常經，則雖屬艱虞，而猶可以保國。若邊用權道，則群情不服而多致患難。今者擧國之係望於元孫已久，若聞此言，則中外人心，必皆波蕩，甚可懼也。", special: "objection" },
-            { speaker: "上", text: "我世祖不傳於元孫，傳於睿宗，當時朝臣無異議，果皆不忠者耶？大臣當國家之大事，宜任其責，而徒以循常之談，爲塞責之地，此豈大臣之道耶？所謂人心波蕩者，亦不然。行權而得中，乃是鎮定之道，有何波蕩之憂乎？", special: "shake" },
+            { speaker: "上", text: "我世祖不傳於元孫，傳於睿宗，當時朝臣無異議，果皆不忠者耶？大臣當國家之大事，宜任其責，而徒以循常之談，爲塞責之地，此豈大臣之道耶？", special: "shake" },
             { speaker: "上", text: "（謂瑬曰）此事專在於領相，卿其決之。", special: "flash" },
             { speaker: "瑬", text: "臣雖忝首相，顧安敢獨斷乎？若明知宗社存亡決於此舉，則群臣固無敢異議者，而今日之舉，未見其必係於存亡，而欲行非常之道，此臣等之所以不敢輕議也。" },
-            { speaker: "上", text: "古之大臣擔當國事，不知有其身. 我太宗朝讓寧大君之在東宮也，百官請廢之，至於庭請，是皆以國為重，而不顧後患者也. 若使太宗不許，則後日之禍有不可測，而猶且為之. 今卿等知其可，而不肯言，何也？", special: "speed" },
+            { speaker: "上", text: "古之大臣擔當國事，不知有其身。我太宗朝讓寧大君之在東宮也，百官請廢之，至於庭請，是皆以國為重，而不顧後患者也。今卿等知其可，而不肯言，何也？", special: "speed" },
             { speaker: "瑬", text: "德宗在東宮，昇遐於天順丁丑，而睿宗繼統於戊子，則當時成宗年十二歲矣，月山大君又加長矣，而光廟之建儲如此，未知何故也。" },
             { speaker: "上", text: "月山大君則性質不慧云，而當時成宗之年，亦已過十歲耶？" },
             { speaker: "瑬", text: "成宗生於丁丑德宗升遐之歲，故逮戊子世祖升遐之日，年十二矣。" },
@@ -158,12 +172,12 @@
             { speaker: "爾徵", text: "宗社之計，須與大臣議定，必欲問臣，但有守經而已。" },
             { speaker: "上", text: "（厲聲曰）此事必須與大臣決之。卿等但為此常談，一朝若不諱，卿等何以為計耶？", special: "shake" },
             { speaker: "自點", text: "此舉出於聖上之深思慮，宜速斷定，何必持難耶？" },
-            { speaker: "上", text: "大臣之議，每以經常二字為執言之地，含糊傳會。棄職而去宜矣！士君子行己處心，豈可如是黠鼠耶？", special: "shake" },
-            { speaker: "悦", text: "以經常言之，則臣民之屬望，自有所載。不意今日有此非常之舉，故臣等之言如是矣。若以為宗社臣民，必如是而可安，則亦豈無行權之道乎？時任大臣及元勳皆在此，可以更詢而決之也。" },
+            { speaker: "上", text: "大臣之議，每以經常二字為執言之地，含糊傳會. 棄職而去宜矣！士君子行己處心，豈可如是黠鼠耶？", special: "shake" },
+            { speaker: "悦", text: "以經常言之，則臣民之屬望，自有所載. 不意今日有此非常之舉，故臣等之言如是矣. 若以為宗社臣民，必如是而可安，則亦豈無行權之道乎？時任大臣及元勳皆在此，可以更詢而決之也。" },
             { speaker: "敬輿", text: "上意雖以元孫之幼沖，思得長君，而非常之舉，豈敢易議？且論其長幼，不若論其賢否. 今也聖教，不及於元孫之賢否，而只以長幼為言. 自古幼年嗣位，成德保邦者，亦非一二，豈可以年之幼沖，而輕易廢立耶？" },
             { speaker: "敬輿", text: "元孫之在膝下已久，其賢不肖，想已洞燭，而外庭之臣無由得知. 今日臣民，皆已屬望於元孫，知有世嫡之當承而已. 若反常行權，而宗社永賴，則其在古昔，亦有此事，帝王經常之典，臣亦知其不可膠守矣。", special: "objection" },
-            { speaker: "悦", text: "今日諸臣之所以持難不決者，非過也。世子既沒，則當繼者元孫也。國本之易樹，豈可立決於一言乎？" },
-            { speaker: "德泂", text: "既正元孫之名，又立輔養之官，則位號之定久矣。經常不易之典，可考信於往牒也。人臣之道，猝當反常之舉，當以守經爭之乎，抑將以處權順之乎？今日聖教，雖以宗社之計為言，而猝然一朝，欲易已正之名號，群臣若靡然從之，則將焉用彼臣為哉？", special: "objection" },
+            { speaker: "悦", text: "今日諸臣之所以持難不決者，非過也. 世子既沒，則當繼者元孫也. 國本之易樹，豈可立決於一言乎？" },
+            { speaker: "德泂", text: "既正元孫之名，又立輔養之官，則位號之定久矣. 經常不易之典，可考信於往牒也. 人臣之道，猝當反常之舉，當以守經爭之乎，抑將以處權順之乎？今日聖教，雖以宗社之計為言，而猝然一朝，欲易已正之名號，群臣若靡然從之，則將焉用彼臣為哉？", special: "objection" },
             { speaker: "上", text: "（默然良久曰）大臣之意，則皆歸於一耶？", special: "flash" },
             { speaker: "瑬", text: "似無異議也。" },
             { speaker: "上", text: "不幸諸子皆沒，只有二人，大臣擇賢而定之。此非嫡長之比，唯當擇其賢耳。" },
@@ -199,7 +213,7 @@
         let isTyping = false;
         let typingTimer = null;
 
-        function typeText(element, text, skipSpecial = false) {
+        function typeText(element, text) {
             if (typingTimer) clearInterval(typingTimer);
             isTyping = true;
             element.innerHTML = "";
@@ -241,7 +255,6 @@
             if (entry.text.includes("鳳林大君")) document.getElementById('char-bongnim').classList.add('active');
             if (entry.text.includes("麟坪大君")) document.getElementById('char-inpyeong').classList.add('active');
             if (entry.text.includes("元孫") || entry.text.includes("世孫")) document.getElementById('char-sesun').classList.add('active');
-            
             document.getElementById('btn-prev').disabled = (currentIndex <= 0);
         }
 
@@ -296,14 +309,9 @@
             document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
             document.getElementById('btn-next').addEventListener('click', nextDialogue);
             document.getElementById('btn-prev').addEventListener('click', (e) => { e.stopPropagation(); prevDialogue(); });
-            
             window.addEventListener('keydown', (e) => {
-                if (e.code === "Space") {
-                    e.preventDefault();
-                    nextDialogue();
-                } else if (e.code === "ArrowLeft" || e.code === "Backspace") {
-                    prevDialogue();
-                }
+                if (e.code === "Space") { e.preventDefault(); nextDialogue(); }
+                else if (e.code === "ArrowLeft" || e.code === "Backspace") { prevDialogue(); }
             });
         }
         window.onload = init;
