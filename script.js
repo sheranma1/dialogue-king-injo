@@ -37,7 +37,7 @@ const dialogue = [
     { speaker: "上", text: "此言是也。", mood: 80, stance: 10 },
     { speaker: "瑬", text: "群臣之言，似與臣意相反矣。", mood: 95, stance: -10 },
     { speaker: "上", text: "然則卿之見，果以為何如耶？", mood: 95, stance: 5 },
-    { speaker: "瑬", text: "癸亥反正之舉、南漢出城之事，豈非非常舉措？若上意已定，則臣何敢可否於其間哉？", mood: 90, stance: -5 },
+    { speaker: "瑬", text: "癸亥反正之舉、南漢出城之事，豈非非常舉措？今也臣民之望，非不已屬於元孫。若上意已定，則臣何敢可否於其間哉？", mood: 90, stance: -5 },
     { speaker: "上", text: "卿之意，與予合矣。大君雖有二人，皆無可取，故以此計也。", mood: 85, stance: 15 },
     { speaker: "瑬", text: "讓寧大君多失德、敗度之事，故朝臣有廢立之請。今則元孫幼沖，失德未彰，所以人心之驚惑也。", mood: 95, stance: -10 },
     { speaker: "上", text: "元孫之師傅，皆在坐中，豈不明知其賢不肖耶？", mood: 100, stance: 5 },
@@ -47,53 +47,45 @@ const dialogue = [
     { speaker: "上", text: "元孫性質不明，決非負荷之才也。", mood: 100, stance: 20 },
     { speaker: "植", text: "進講之時，可見其英發矣。", mood: 100, stance: -10 },
     { speaker: "景奭", text: "臣亦進參講書之列，而幼少之年，豈可預卜將來之成就耶？", mood: 100, stance: -5 },
-    { speaker: "上", text: "洛興未畢前說，盍終言之？", mood: 95, stance: 5 },
+    { speaker: "上", text: "（調自點）洛興未畢前說，盍終言之？", mood: 95, stance: 5 },
     { speaker: "自點", text: "聖上之為宗社深謀遠慮，豈無所見哉？", mood: 90, stance: 15 },
     { speaker: "上", text: "然則卿之意，不以為不可也。", mood: 85, stance: 10 },
-    { speaker: "瑬", text: "聖上之為此舉者，公天下之心也。", mood: 90, stance: -5 },
+    { speaker: "瑬", text: "聖上之為此舉者，公天下之心也。寧有私意於其間哉？", mood: 90, stance: -5 },
     { speaker: "瑞鳳", text: "臣之所達，經常之道也。若夫處權，在聖上。", mood: 95, stance: -10 },
-    { speaker: "上", text: "大臣之議，每以經常二字為執言之地。棄職而去宜矣！", mood: 100, stance: 20 },
+    { speaker: "上", text: "大臣之議，每以經常二字為執言之地，含糊傳會。棄職而去宜矣！", mood: 100, stance: 20 },
     { speaker: "上", text: "士君子行己處心，豈可如是黠鼠耶？", mood: 100, stance: 10 },
     { speaker: "史官", text: "時上怒甚，左右皆不敢言。", mood: 100, stance: 0 }
 ];
 
+// 根据派系进行分配
+const traditionalists = ["瑬", "瑞鳳", "悦", "敬輿", "景奭", "植", "堉", "太和", "楘", "爾徵", "德泂", "時白"];
+const reformists = ["自點", "仁垕", "壽賢"]; // 權變或傾向王意者
+
 const ministersData = {
-    "瑬": { img: 'pixel_minister_old.png', filter: 'hue-rotate(0deg)' },
-    "瑞鳳": { img: 'pixel_minister.png', filter: 'hue-rotate(90deg)' },
-    "悦": { img: 'pixel_minister.png', filter: 'hue-rotate(0deg)' },
-    "自點": { img: 'pixel_minister.png', filter: 'hue-rotate(180deg)' },
-    "敬輿": { img: 'pixel_minister_old.png', filter: 'brightness(0.7) hue-rotate(45deg)' },
-    "德泂": { img: 'pixel_minister.png', filter: 'hue-rotate(240deg)' },
-    "仁垕": { img: 'pixel_minister.png', filter: 'contrast(1.4) hue-rotate(30deg)' },
-    "時白": { img: 'pixel_minister_old.png', filter: 'sepia(0.6)' },
-    "景奭": { img: 'pixel_minister.png', filter: 'grayscale(0.6)' },
-    "植": { img: 'pixel_minister_old.png', filter: 'hue-rotate(300deg)' },
-    "壽賢": { img: 'pixel_minister.png', filter: 'hue-rotate(120deg)' },
-    "堉": { img: 'pixel_minister_old.png', filter: 'brightness(1.4)' },
-    "太和": { img: 'pixel_minister.png', filter: 'hue-rotate(60deg)' },
-    "楘": { img: 'pixel_minister_old.png', filter: 'invert(0.1) hue-rotate(210deg)' },
-    "爾徵": { img: 'pixel_minister_old.png', filter: 'hue-rotate(150deg)' }
+    "瑬": { img: 'pixel_minister_old.png', filter: 'hue-rotate(0deg)', faction: 'trad' },
+    "瑞鳳": { img: 'pixel_minister.png', filter: 'hue-rotate(90deg)', faction: 'trad' },
+    "悦": { img: 'pixel_minister.png', filter: 'hue-rotate(0deg)', faction: 'trad' },
+    "自點": { img: 'pixel_minister.png', filter: 'hue-rotate(180deg)', faction: 'reform' },
+    "敬輿": { img: 'pixel_minister_old.png', filter: 'brightness(0.7)', faction: 'trad' },
+    "德泂": { img: 'pixel_minister.png', filter: 'hue-rotate(240deg)', faction: 'trad' },
+    "仁垕": { img: 'pixel_minister.png', filter: 'contrast(1.4)', faction: 'reform' },
+    "時白": { img: 'pixel_minister_old.png', filter: 'sepia(0.6)', faction: 'trad' },
+    "景奭": { img: 'pixel_minister.png', filter: 'grayscale(0.6)', faction: 'trad' },
+    "植": { img: 'pixel_minister_old.png', filter: 'hue-rotate(300deg)', faction: 'trad' },
+    "壽賢": { img: 'pixel_minister.png', filter: 'hue-rotate(120deg)', faction: 'reform' },
+    "堉": { img: 'pixel_minister_old.png', filter: 'brightness(1.4)', faction: 'trad' },
+    "太和": { img: 'pixel_minister.png', filter: 'hue-rotate(60deg)', faction: 'trad' },
+    "楘": { img: 'pixel_minister_old.png', filter: 'invert(0.1)', faction: 'trad' },
+    "爾徵": { img: 'pixel_minister_old.png', filter: 'hue-rotate(150deg)', faction: 'trad' }
 };
 
-const ministersList = Object.keys(ministersData);
-let currentIndex = -1;
-let currentStanceBalance = 50; 
-
 function init() {
-    console.log("初始化廷議系統...");
     const leftWing = document.getElementById('min-left');
     const rightWing = document.getElementById('min-right');
-    const box = document.getElementById('dialogue-box');
+    leftWing.innerHTML = '<div class="wing-label">守經派</div>';
+    rightWing.innerHTML = '<div class="wing-label">權變派</div>';
 
-    if (!leftWing || !rightWing || !box) {
-        console.error("找不到關鍵 DOM 元素！");
-        return;
-    }
-
-    leftWing.innerHTML = '';
-    rightWing.innerHTML = '';
-
-    ministersList.forEach((name, index) => {
+    Object.keys(ministersData).forEach(name => {
         const data = ministersData[name];
         const div = document.createElement('div');
         div.className = 'character minister';
@@ -102,53 +94,35 @@ function init() {
         div.style.setProperty('--char-filter', data.filter);
         div.innerHTML = `<div class="silhouette min-sil"></div><div class="name-tag">${name}</div>`;
         
-        if (index % 2 === 0) leftWing.appendChild(div);
+        if (data.faction === 'trad') leftWing.appendChild(div);
         else rightWing.appendChild(div);
-        
-        setTimeout(() => div.classList.add('loaded'), 50);
     });
 
-    box.onclick = nextDialogue;
-    console.log("事件監聽器已綁定。");
+    document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
 }
 
 function nextDialogue() {
     currentIndex++;
-    console.log("當前對話索引:", currentIndex);
-
-    if (currentIndex >= dialogue.length) {
-        console.log("對話結束");
-        return;
-    }
-
+    if (currentIndex >= dialogue.length) return;
     const entry = dialogue[currentIndex];
     document.getElementById('speaker').innerText = entry.speaker;
     document.getElementById('speech').innerText = entry.text;
-
     document.querySelectorAll('.character').forEach(c => c.classList.remove('active'));
-    
-    if (entry.speaker === "上") {
-        document.getElementById('char-king').classList.add('active');
-    } else {
-        const target = document.getElementById(`char-${entry.speaker}`);
-        if (target) target.classList.add('active');
-    }
+    if (entry.speaker === "上") document.getElementById('char-king').classList.add('active');
+    else if (ministersData[entry.speaker]) document.getElementById(`char-${entry.speaker}`).classList.add('active');
 
     const moodFill = document.getElementById('mood-fill');
-    if(moodFill) moodFill.style.width = entry.mood + '%';
-    
+    moodFill.style.width = entry.mood + '%';
+    document.getElementById('king-mood-label').innerText = entry.mood >= 95 ? "王之意：震怒" : "王之意：尋思";
+
     currentStanceBalance += entry.stance;
     currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
-    
-    const barTrad = document.getElementById('bar-traditional');
-    const barReform = document.getElementById('bar-reform');
-    if(barTrad) barTrad.style.width = (100 - currentStanceBalance) + '%';
-    if(barReform) barReform.style.width = currentStanceBalance + '%';
+    document.getElementById('bar-traditional').style.width = (100 - currentStanceBalance) + '%';
+    document.getElementById('bar-reform').style.width = currentStanceBalance + '%';
 
     if (entry.mood >= 95) {
         document.getElementById('app').classList.add('shake');
         setTimeout(() => document.getElementById('app').classList.remove('shake'), 400);
     }
 }
-
 window.onload = init;
