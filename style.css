@@ -117,12 +117,12 @@ body {
 
 /* 國王專用：紅袍老年濾鏡修復 */
 .king-sil {
-    background-image: url('pixel_minister_old.png');
-    /* 使用背景混合實現更真實的紅袍效果 */
-    background-color: var(--king-red);
-    background-blend-mode: multiply;
-    width: 200px;
-    height: 200px;
+    background-image: url('pixel_king.png');
+    /* 移除詭異紅光，改用肅穆的老年化色調濾鏡 */
+    filter: saturate(0.8) contrast(1.1) brightness(0.9);
+    width: 320px;
+    height: 320px;
+    image-rendering: pixelated;
 }
 
 .min-sil {
