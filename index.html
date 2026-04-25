@@ -9,49 +9,45 @@
 </head>
 <body>
     <div id="app">
-        <!-- 背景層 -->
         <div class="palace-bg"></div>
         
-        <!-- 頂部：陣營平衡條 -->
         <header class="status-bar">
-            <div class="stance-label">【 廷議力量平衡 】</div>
+            <div class="stance-label">廷議平衡</div>
             <div class="stance-container">
-                <div class="stance traditionalists" id="bar-traditional">
-                    <span>守經 (元孫)</span>
-                </div>
-                <div class="stance reformists" id="bar-reform">
-                    <span>權變 (大君)</span>
-                </div>
+                <div class="stance traditionalists" id="bar-traditional"><span>守經</span></div>
+                <div class="stance reformists" id="bar-reform"><span>權變</span></div>
             </div>
             <div class="king-mood-indicator">
-                <div id="king-mood-label">王之意：猶豫</div>
+                <div id="king-mood-label">王之意：試探</div>
                 <div class="mood-bar"><div id="mood-fill"></div></div>
             </div>
         </header>
 
-        <!-- 主界面：立繪區 -->
-        <main class="court-chamber">
-            <div class="ministers-grid" id="ministers-container">
-                <!-- 動態生成大臣立繪 -->
-            </div>
-            <div class="king-area">
+        <main class="court-layout">
+            <!-- 頂部：國王 -->
+            <div class="king-throne">
                 <div class="character king" id="char-king">
                     <div class="silhouette king-sil"></div>
                     <div class="name-tag">上 (仁祖)</div>
                 </div>
             </div>
+
+            <!-- 中間：對話框 -->
+            <div class="dialogue-center">
+                <section class="dialogue-box" id="dialogue-box">
+                    <div class="speaker-name" id="speaker">宮廷史官</div>
+                    <div class="speech-text" id="speech">「上謂諸臣曰...」<br>點擊開始對話。</div>
+                    <div class="click-hint">點擊屏幕繼續 ▽</div>
+                </section>
+            </div>
+
+            <!-- 底部兩側：大臣 -->
+            <div class="ministers-floor">
+                <div class="minister-wing left" id="min-left"></div>
+                <div class="minister-wing right" id="min-right"></div>
+            </div>
         </main>
 
-        <!-- 對話展示區 -->
-        <section class="dialogue-overlay" id="dialogue-box">
-            <div class="dialogue-content">
-                <div class="speaker-name" id="speaker">宮廷史官</div>
-                <div class="speech-text" id="speech">「上謂諸臣曰...」<br>點擊開始這場決定宗社命運的對話。</div>
-            </div>
-            <div class="click-hint">點擊屏幕繼續 ▽</div>
-        </section>
-
-        <!-- 裝飾元素 -->
         <div class="fog-overlay"></div>
     </div>
     <script src="script.js"></script>
