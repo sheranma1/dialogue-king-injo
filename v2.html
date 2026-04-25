@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 史料全文本版</title>
+    <title>朝廷爭議 V2 - 完整交互版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -17,7 +17,7 @@
         body { background: var(--paper-white); color: var(--ink-black); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
         #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
         
-        .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(255,255,255,0.1) 1deg 2deg); z-index: -1; opacity: 0; transition: opacity 0.2s; }
+        .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(255,255,255,0.1) 1deg 2deg); z-index: -1; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
         .speed-lines.active { opacity: 1; }
         .palace-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #fff 0%, #fcfaf2 100%); z-index: -2; }
 
@@ -54,10 +54,15 @@
         .avatars-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
         .minister .avatar-circle { width: 85px; height: 85px; }
 
-        .dialogue-center { height: 220px; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .dialogue-center { height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; gap: 10px; }
         .dialogue-box { width: 100%; max-width: 900px; background: rgba(255,255,255,0.95); border-radius: 15px; padding: 25px 50px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); border: 4px solid #444; cursor: pointer; text-align: left; position: relative; }
         .speaker-box { position: absolute; top: -20px; left: 30px; background: #444; color: #fff; padding: 5px 25px; border-radius: 5px; font-weight: 900; font-size: 1.2rem; box-shadow: 5px 5px 0px var(--gold); }
         .speech-text { font-size: 1.8rem; line-height: 1.6; color: #111; font-weight: 700; min-height: 2.4em; }
+
+        .controls { display: flex; gap: 20px; width: 100%; max-width: 900px; justify-content: flex-end; }
+        .btn-control { background: #444; color: #fff; border: none; padding: 8px 25px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); transition: transform 0.1s; }
+        .btn-control:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--gold); }
+        .btn-control:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .term { color: var(--royal-gold); border-bottom: 2px solid var(--royal-gold); cursor: help; }
         #wiki-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 450px; background: #fff; border-radius: 20px; padding: 35px; border: 4px solid var(--gold); z-index: 20000; display: none; }
@@ -93,8 +98,12 @@
             <div class="dialogue-center">
                 <section class="dialogue-box" id="dialogue-box">
                     <div class="speaker-box" id="speaker">宮廷史官</div>
-                    <div class="speech-text" id="speech"></div>
+                    <div class="speech-text" id="speech">點擊屏幕或按空格鍵開始。</div>
                 </section>
+                <div class="controls">
+                    <button class="btn-control" id="btn-prev" disabled>◀ 回退 (Back)</button>
+                    <button class="btn-control" id="btn-next">前進 (Space) ▶</button>
+                </div>
             </div>
         </main>
     </div>
@@ -127,13 +136,13 @@
             { speaker: "上", text: "我世祖不傳於元孫，傳於睿宗，當時朝臣無異議，果皆不忠者耶？大臣當國家之大事，宜任其責，而徒以循常之談，爲塞責之地，此豈大臣之道耶？所謂人心波蕩者，亦不然。行權而得中，乃是鎮定之道，有何波蕩之憂乎？", special: "shake" },
             { speaker: "上", text: "（謂瑬曰）此事專在於領相，卿其決之。", special: "flash" },
             { speaker: "瑬", text: "臣雖忝首相，顧安敢獨斷乎？若明知宗社存亡決於此舉，則群臣固無敢異議者，而今日之舉，未見其必係於存亡，而欲行非常之道，此臣等之所以不敢輕議也。" },
-            { speaker: "上", text: "古之大臣擔當國事，不知有其身。我太宗朝讓寧大君之在東宮也，百官請廢之，至於庭請，是皆以國為重，而不顧後患者也。若使太宗不許，則後日之禍有不可測，而猶且為之。今卿等知其可，而不肯言，何也？", special: "speed" },
+            { speaker: "上", text: "古之大臣擔當國事，不知有其身. 我太宗朝讓寧大君之在東宮也，百官請廢之，至於庭請，是皆以國為重，而不顧後患者也. 若使太宗不許，則後日之禍有不可測，而猶且為之. 今卿等知其可，而不肯言，何也？", special: "speed" },
             { speaker: "瑬", text: "德宗在東宮，昇遐於天順丁丑，而睿宗繼統於戊子，則當時成宗年十二歲矣，月山大君又加長矣，而光廟之建儲如此，未知何故也。" },
             { speaker: "上", text: "月山大君則性質不慧云，而當時成宗之年，亦已過十歲耶？" },
             { speaker: "瑬", text: "成宗生於丁丑德宗升遐之歲，故逮戊子世祖升遐之日，年十二矣。" },
             { speaker: "上", text: "以序言之，則當立者月山，而事有隨時變通者，故不得不如此爾。若以為常經不可不守，則世祖何以不傳於月山，而傳於睿宗，若以長幼言之，則睿宗何以舍月山，而立成廟耶？", special: "shake" },
             { speaker: "瑬", text: "當世祖之世，國家無事，而有此反常之擧，大聖人處事，誠未可量，此蓋出於擇賢耶？" },
-            { speaker: "上", text: "世祖朝事，多危疑，故必欲立長君。若出於擇賢，則成廟之聖，豈必不及於睿宗耶？予亦豈不知循序，而傳之之為至順也？第惟今日之勢，必須國有長君，然後可以保宗社之重也。", special: "speed" },
+            { speaker: "上", text: "世祖朝事，多危疑，故必欲立長君. 若出於擇賢，則成廟之聖，豈必不及於睿宗耶？予亦豈不知循序，而傳之之為至順也？第惟今日之勢，必須國有長君，然後可以保宗社之重也.", special: "speed" },
             { speaker: "德泂", text: "臣之意，亦以瑞鳳之言為然也。" },
             { speaker: "仁垕", text: "殿下之意，為宗社之大計，惟在聖斷耳。" },
             { speaker: "時白", text: "洪、李二大臣之言，俱是經常之道，臣則以兩臣之意為然也。" },
@@ -151,17 +160,17 @@
             { speaker: "自點", text: "此舉出於聖上之深思慮，宜速斷定，何必持難耶？" },
             { speaker: "上", text: "大臣之議，每以經常二字為執言之地，含糊傳會。棄職而去宜矣！士君子行己處心，豈可如是黠鼠耶？", special: "shake" },
             { speaker: "悦", text: "以經常言之，則臣民之屬望，自有所載。不意今日有此非常之舉，故臣等之言如是矣。若以為宗社臣民，必如是而可安，則亦豈無行權之道乎？時任大臣及元勳皆在此，可以更詢而決之也。" },
-            { speaker: "敬輿", text: "上意雖以元孫之幼沖，思得長君，而非常之舉，豈敢易議？且論其長幼，不若論其賢否。今也聖教，不及於元孫之賢否，而只以長幼為言。自古幼年嗣位，成德保邦者，亦非一二，豈可以年之幼沖，而輕易廢立耶？" },
-            { speaker: "敬輿", text: "元孫之在膝下已久，其賢不肖，想已洞燭，而外庭之臣無由得知。今日臣民，皆已屬望於元孫，知有世嫡之當承而已。若反常行權，而宗社永賴，則其在古昔，亦有此事，帝王經常之典，臣亦知其不可膠守矣。", special: "objection" },
+            { speaker: "敬輿", text: "上意雖以元孫之幼沖，思得長君，而非常之舉，豈敢易議？且論其長幼，不若論其賢否. 今也聖教，不及於元孫之賢否，而只以長幼為言. 自古幼年嗣位，成德保邦者，亦非一二，豈可以年之幼沖，而輕易廢立耶？" },
+            { speaker: "敬輿", text: "元孫之在膝下已久，其賢不肖，想已洞燭，而外庭之臣無由得知. 今日臣民，皆已屬望於元孫，知有世嫡之當承而已. 若反常行權，而宗社永賴，則其在古昔，亦有此事，帝王經常之典，臣亦知其不可膠守矣。", special: "objection" },
             { speaker: "悦", text: "今日諸臣之所以持難不決者，非過也。世子既沒，則當繼者元孫也。國本之易樹，豈可立決於一言乎？" },
             { speaker: "德泂", text: "既正元孫之名，又立輔養之官，則位號之定久矣。經常不易之典，可考信於往牒也。人臣之道，猝當反常之舉，當以守經爭之乎，抑將以處權順之乎？今日聖教，雖以宗社之計為言，而猝然一朝，欲易已正之名號，群臣若靡然從之，則將焉用彼臣為哉？", special: "objection" },
             { speaker: "上", text: "（默然良久曰）大臣之意，則皆歸於一耶？", special: "flash" },
             { speaker: "瑬", text: "似無異議也。" },
             { speaker: "上", text: "不幸諸子皆沒，只有二人，大臣擇賢而定之。此非嫡長之比，唯當擇其賢耳。" },
-            { speaker: "瑞鳳", text: "大君與朝臣，無相接之事，何能知其優劣乎？古人云：『知子莫如父。』此在睿斷而已。" },
+            { speaker: "瑞鳳", text: "大君與朝臣，無相接之事，何能知其優劣乎？古人云：『知子莫如父. 』此在睿斷而已。" },
             { speaker: "上", text: "二人皆劣，無所取舍。予欲立長，未知何如？" },
             { speaker: "瑬", text: "立嫡以長，順也。" },
-            { speaker: "上", text: "然。清使將來，必問國本，故不得不急急議定耳。", special: "speed" },
+            { speaker: "上", text: "然. 清使將來，必問國本，故不得不急急議定耳.", special: "speed" },
             { speaker: "瑬", text: "此外更無可議，須明白下教，使群臣明知之。" },
             { speaker: "上", text: "以鳳林大君為世子。", special: "flash" },
             { speaker: "自點", text: "當捧承傳乎？" },
@@ -188,17 +197,19 @@
 
         let currentIndex = -1;
         let isTyping = false;
+        let typingTimer = null;
 
-        function typeText(element, text) {
+        function typeText(element, text, skipSpecial = false) {
+            if (typingTimer) clearInterval(typingTimer);
             isTyping = true;
             element.innerHTML = "";
             let i = 0;
-            const timer = setInterval(() => {
+            typingTimer = setInterval(() => {
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
                     i++;
                 } else {
-                    clearInterval(timer);
+                    clearInterval(typingTimer);
                     element.innerHTML = formatText(element.innerHTML);
                     isTyping = false;
                 }
@@ -210,32 +221,16 @@
             const flash = document.getElementById('flash');
             const speed = document.getElementById('speed-lines');
             const bubble = document.getElementById('objection-bubble');
-
-            if (type === "shake") {
-                stage.classList.add('shake-screen');
-                setTimeout(() => stage.classList.remove('shake-screen'), 400);
-            } else if (type === "flash") {
-                flash.classList.add('flash-active');
-                setTimeout(() => flash.classList.remove('flash-active'), 300);
-            } else if (type === "speed") {
-                speed.classList.add('active');
-                setTimeout(() => speed.classList.remove('active'), 1000);
-            } else if (type === "objection") {
-                bubble.classList.add('show');
-                flash.classList.add('flash-active');
-                stage.classList.add('shake-screen');
-                setTimeout(() => {
-                    bubble.classList.remove('show');
-                    flash.classList.remove('flash-active');
-                    stage.classList.remove('shake-screen');
-                }, 800);
+            if (type === "shake") { stage.classList.add('shake-screen'); setTimeout(() => stage.classList.remove('shake-screen'), 400); }
+            else if (type === "flash") { flash.classList.add('flash-active'); setTimeout(() => flash.classList.remove('flash-active'), 300); }
+            else if (type === "speed") { speed.classList.add('active'); setTimeout(() => speed.classList.remove('active'), 1000); }
+            else if (type === "objection") {
+                bubble.classList.add('show'); flash.classList.add('flash-active'); stage.classList.add('shake-screen');
+                setTimeout(() => { bubble.classList.remove('show'); flash.classList.remove('flash-active'); stage.classList.remove('shake-screen'); }, 800);
             }
         }
 
-        function nextDialogue() {
-            if (isTyping) return;
-            currentIndex++;
-            if (currentIndex >= dialogue.length) return;
+        function updateUI() {
             const entry = dialogue[currentIndex];
             document.getElementById('speaker').innerText = entry.speaker;
             typeText(document.getElementById('speech'), entry.text);
@@ -246,6 +241,30 @@
             if (entry.text.includes("鳳林大君")) document.getElementById('char-bongnim').classList.add('active');
             if (entry.text.includes("麟坪大君")) document.getElementById('char-inpyeong').classList.add('active');
             if (entry.text.includes("元孫") || entry.text.includes("世孫")) document.getElementById('char-sesun').classList.add('active');
+            
+            document.getElementById('btn-prev').disabled = (currentIndex <= 0);
+        }
+
+        function nextDialogue() {
+            if (isTyping) {
+                clearInterval(typingTimer);
+                const entry = dialogue[currentIndex];
+                document.getElementById('speech').innerHTML = formatText(entry.text);
+                isTyping = false;
+                return;
+            }
+            if (currentIndex < dialogue.length - 1) {
+                currentIndex++;
+                updateUI();
+            }
+        }
+
+        function prevDialogue() {
+            if (isTyping) clearInterval(typingTimer);
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateUI();
+            }
         }
 
         function showWiki(term) {
@@ -260,9 +279,7 @@
         }
         function formatText(text) {
             let res = text;
-            Object.keys(wikiData).forEach(k => {
-                res = res.replace(new RegExp(k, 'g'), `<span class="term" onclick="event.stopPropagation(); showWiki('${k}')">${k}</span>`);
-            });
+            Object.keys(wikiData).forEach(k => { res = res.replace(new RegExp(k, 'g'), `<span class="term" onclick="event.stopPropagation(); showWiki('${k}')">${k}</span>`); });
             return res;
         }
 
@@ -277,6 +294,17 @@
                 grid.appendChild(div);
             });
             document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
+            document.getElementById('btn-next').addEventListener('click', nextDialogue);
+            document.getElementById('btn-prev').addEventListener('click', (e) => { e.stopPropagation(); prevDialogue(); });
+            
+            window.addEventListener('keydown', (e) => {
+                if (e.code === "Space") {
+                    e.preventDefault();
+                    nextDialogue();
+                } else if (e.code === "ArrowLeft" || e.code === "Backspace") {
+                    prevDialogue();
+                }
+            });
         }
         window.onload = init;
     </script>
