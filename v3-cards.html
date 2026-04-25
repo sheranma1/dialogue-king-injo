@@ -500,17 +500,17 @@
                 cardEl.classList.add('fly-in');
             });
 
-            // 動畫完成後停留（1秒動畫）
+            // 動畫完成後停留（1秒動畫 + 1秒停留）
             setTimeout(() => {
                 cardEl.classList.remove('fly-in');
                 cardEl.classList.add('stay');
             }, 1000);
 
-            // 停留7秒後淡出
+            // 停留1秒後淡出（2秒後開始淡出）
             setTimeout(() => {
                 cardEl.classList.add('fade-out');
                 setTimeout(() => { if (displayArea.contains(cardEl)) displayArea.removeChild(cardEl); }, 500);
-            }, 8000);
+            }, 2000);
         }
 
         function updateUI() {
