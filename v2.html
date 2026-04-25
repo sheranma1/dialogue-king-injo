@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>朝廷爭議 V2 - 巨幕對決版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --king-red: #c0392b;
+            --gold: #d4af37;
+            --ink-black: #0a0a0a;
+            --paper-white: #f4f1ea;
+            --reform-color: #ff4757;
+            --tradition-color: #2e86de;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--ink-black);
+            color: var(--paper-white);
+            font-family: 'Noto Serif TC', serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+        #app {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .palace-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top, #2c0a0a 0%, #000 80%);
+            z-index: -2;
+        }
+        .status-bar {
+            padding: 20px 40px;
+            height: 160px;
+            background: linear-gradient(to bottom, rgba(20,20,20,1), rgba(0,0,0,0.8));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid var(--gold);
+            z-index: 999;
+            box-shadow: 0 10px 50px rgba(0,0,0,1);
+        }
+        .stance-label {
+            font-size: 24px;
+            color: var(--gold);
+            font-weight: 900;
+            letter-spacing: 10px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--gold);
+        }
+        .stance-container {
+            width: 90%;
+            height: 60px;
+            background: #000;
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 30px rgba(212,175,55,0.5);
+        }
+        .stance {
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px #000;
+            color: white;
+        }
+        .traditionalists { background: linear-gradient(to bottom, #2e86de, #1a5276); }
+        .reformists { background: linear-gradient(to bottom, #ff4757, #922b21); }
+        .king-mood-indicator {
+            position: absolute; right: 50px; top: 30px; text-align: right; min-width: 250px;
+        }
+        #king-mood-label { font-size: 20px; color: var(--gold); margin-bottom: 10px; font-weight: 900; }
+        .mood-bar { width: 100%; height: 12px; background: #222; border-radius: 6px; border: 1px solid var(--gold); }
+        #mood-fill { width: 20%; height: 100%; background: #ff0000; box-shadow: 0 0 20px #ff0000; transition: width 0.6s ease; }
+        .court-layout { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 40px; }
+        .king-throne { display: flex; justify-content: center; height: 25%; align-items: center; }
+        .dialogue-center { display: flex; justify-content: center; align-items: center; height: 40%; }
+        .ministers-floor { display: flex; justify-content: space-between; align-items: flex-end; height: 35%; }
+        .minister-wing { display: flex; gap: 15px; position: relative; padding-top: 50px; }
+        .wing-label { position: absolute; top: 10px; width: 100%; text-align: center; font-size: 1.5rem; font-weight: 900; color: var(--gold); opacity: 0.7; letter-spacing: 15px; text-shadow: 0 0 10px var(--gold); }
+        .character { display: flex; flex-direction: column; align-items: center; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(1) brightness(0.3); }
+        .character.active { filter: grayscale(0) brightness(1.2) drop-shadow(0 0 30px var(--gold)); transform: scale(2.5) translateY(-50px); z-index: 200; }
+        .silhouette { background-size: contain; background-repeat: no-repeat; background-position: bottom; image-rendering: pixelated; }
+        .king-sil { background-image: url('king_final_v2.png'); background-color: transparent !important; width: 280px; height: 280px; }
+        .min-sil { background-image: var(--bg-img); filter: var(--char-filter); width: 110px; height: 110px; }
+        .name-tag { margin-top: 10px; font-size: 14px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); color: var(--gold); padding: 4px 10px; font-weight: 900; }
+        .dialogue-box { width: 1100px; background: rgba(5, 5, 5, 0.95); border: 4px solid var(--gold); padding: 50px 80px; cursor: pointer; box-shadow: 0 0 80px rgba(0,0,0,1); text-align: center; border-radius: 12px; }
+        .speaker-name { color: var(--gold); font-size: 3rem; font-weight: 900; margin-bottom: 25px; letter-spacing: 10px; text-decoration: underline var(--king-red); }
+        .speech-text { font-size: 3.5rem; line-height: 1.5; color: #fff; font-weight: 700; text-shadow: 3px 3px 6px rgba(0,0,0,0.8); }
+        .click-hint { font-size: 16px; color: var(--gold); opacity: 0.8; margin-top: 30px; animation: blink 2s infinite; }
+        @keyframes blink { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+        .fog-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); pointer-events: none; z-index: 5; }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-4px, 3px); } 100% { transform: translate(2px, -2px); } }
+        .shake { animation: shake 0.15s infinite; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="palace-bg"></div>
+        <header class="status-bar">
+            <div class="stance-label">廷議平衡 (守經 vs 權變)</div>
+            <div class="stance-container">
+                <div class="stance traditionalists" id="bar-traditional"><span>守經</span></div>
+                <div class="stance reformists" id="bar-reform"><span>權變</span></div>
+            </div>
+            <div class="king-mood-indicator">
+                <div id="king-mood-label">王之意：尋思</div>
+                <div class="mood-bar"><div id="mood-fill"></div></div>
+            </div>
+        </header>
+        <main class="court-layout">
+            <div class="king-throne">
+                <div class="character king" id="char-king">
+                    <div class="silhouette king-sil"></div>
+                    <div class="name-tag">上 (仁祖)</div>
+                </div>
+            </div>
+            <div class="dialogue-center">
+                <section class="dialogue-box" id="dialogue-box">
+                    <div class="speaker-name" id="speaker">宮廷史官</div>
+                    <div class="speech-text" id="speech">點擊開始這場決定宗社命運的對話。</div>
+                    <div class="click-hint">點擊屏幕繼續 ▽</div>
+                </section>
+            </div>
+            <div class="ministers-floor">
+                <div class="minister-wing left" id="min-left"><div class="wing-label">守經派</div></div>
+                <div class="minister-wing right" id="min-right"><div class="wing-label">權變派</div></div>
+            </div>
+        </main>
+        <div class="fog-overlay"></div>
+    </div>
+    <script>
+        const dialogue = [
+            { speaker: "上", text: "予有宿疾，往往而劇，元孫如彼其微弱。予觀今日之形勢，不可以待小兒之成長。未知卿等之意以爲何如？", mood: 20, stance: 0 },
+            { speaker: "瑬", text: "朝野方頌岡陵之祝，而殿下遽出此言，臣等罔知所達。", mood: 25, stance: -5 },
+            { speaker: "上", text: "非徒疾病如此，國事日阽於艱危，脱有不諱，幼沖之主恐不能擔當大器。予欲於大君中擇立爾。", mood: 40, stance: 10 },
+            { speaker: "瑬", text: "今此下教，雖出於爲宗社之大計，而臣等惶惑不知所言，宜博詢諸臣。", mood: 45, stance: 0 },
+            { speaker: "瑞鳳", text: "考諸往牒，太子不在，繼以太孫，此乃不易之常經。反常行權，恐非國家之福。", mood: 50, stance: -15 },
+            { speaker: "上", text: "雖在治平之世，必以國有長君爲福，况今日乎？", mood: 60, stance: 5 },
+            { speaker: "悦", text: "瑞鳳之言，正合臣意。殿下雖有微恙，春秋鼎盛，元孫雖曰微弱，已至十歲。宗統甚重，恐不可輕議也。", mood: 60, stance: -10 },
+            { speaker: "自點", text: "殿下以疾病之未平、時事之艱虞，爲宗社、生民之大計，而發此言，宜更詢于諸臣而決之。", mood: 65, stance: 0 },
+            { speaker: "敬輿", text: "臣之愚見，與瑞鳳無異。世嫡承統，今古之常經，常經之外更無所陳。今者擧國之係望於元孫已久，若聞此言，則中外人心，必皆波蕩，甚可懼也。", mood: 75, stance: -20 },
+            { speaker: "上", text: "我世祖不傳於元孫，傳於睿宗，當時朝臣無異議，果皆不忠者耶？大臣當國家之大事，宜任其責，而徒以循常之談，爲塞責之地，此豈大臣之道耶？", mood: 85, stance: 15 },
+            { speaker: "上", text: "（謂瑬曰）此事專在於領相，卿其決之。", mood: 100, stance: 5 },
+            { speaker: "瑬", text: "臣雖忝首相，顧安敢獨斷乎？今日之擧，未見其必係於存亡，而欲行非常之道，此臣等之所以不敢輕議也。", mood: 95, stance: -10 },
+            { speaker: "上", text: "古之大臣擔當國事，不知有其身。今卿等知其可，而不肯言，何也？", mood: 100, stance: 15 },
+            { speaker: "瑬", text: "德宗在東宮，昇遐於天順丁丑，而睿宗繼統於戊子... 光廟之建儲如此，未知何故也。", mood: 85, stance: -5 },
+            { speaker: "上", text: "月山大君則性質不慧云，而當時成宗之年，亦已過十歲耶？", mood: 80, stance: 5 },
+            { speaker: "瑬", text: "成宗生於丁丑德宗升遐之歲，故逮戊子世祖升遐之日，年十二矣。", mood: 80, stance: -5 },
+            { speaker: "上", text: "以序言之，則當立者月山，而事有隨時變通者，故不得不如此爾。", mood: 90, stance: 15 },
+            { speaker: "瑬", text: "當世祖之世，國家無事，而有此反常之擧，大聖人處事，誠未可量，此蓋出於擇賢耶？", mood: 90, stance: -5 },
+            { speaker: "上", text: "世祖朝事，多危疑，故必欲立長君。予亦豈不知循序之爲至順也？第惟今日之勢，必須國有長君，然後可以保宗社之重也。", mood: 100, stance: 20 },
+            { speaker: "德泂", text: "臣之意，亦以瑞鳳之言爲然也。", mood: 100, stance: -5 },
+            { speaker: "仁垕", text: "殿下之意，爲宗社之大計，惟在聖斷耳。", mood: 95, stance: 15 },
+            { speaker: "時白", text: "洪、李二大臣之言，俱是經常之道，臣則以兩臣之意爲然也。", mood: 95, stance: -10 },
+            { speaker: "景奭", text: "若一行處變之擧，而反致四方之疑惑，則雖以利害言之，亦不知其可也。", mood: 100, stance: -10 },
+            { speaker: "植", text: "書生之見，只守常道，寧知權變？", mood: 100, stance: -10 },
+            { speaker: "上", text: "所謂書生，平日讀書，而不知用權之道，則雖腹有詩書，亦安用哉？", mood: 100, stance: 20 },
+            { speaker: "植", text: "臣恐不守經，則反不得安也。", mood: 100, stance: -5 },
+            { speaker: "爾徵", text: "宗社之計，須與大臣議定，必欲問臣，但有守經而已。", mood: 100, stance: -15 },
+            { speaker: "自點", text: "此舉出於聖上之深思慮，宜速斷定，何必持難耶？", mood: 90, stance: 20 },
+            { speaker: "上", text: "大臣之議，每以經常二字為執言之地，含糊傳會。棄職而去宜矣！士君子行己處心，豈可如是黠鼠耶？", mood: 100, stance: 20 },
+            { speaker: "史官", text: "時上怒甚，左右皆不敢言。", mood: 100, stance: 0 }
+        ];
+        const ministersData = {
+            "瑬": { img: 'pixel_minister_old.png', filter: 'hue-rotate(0deg)', faction: 'trad' },
+            "瑞鳳": { img: 'pixel_minister.png', filter: 'hue-rotate(90deg)', faction: 'trad' },
+            "悦": { img: 'pixel_minister.png', filter: 'hue-rotate(0deg)', faction: 'trad' },
+            "自點": { img: 'pixel_minister.png', filter: 'hue-rotate(180deg)', faction: 'reform' },
+            "敬輿": { img: 'pixel_minister_old.png', filter: 'brightness(0.7)', faction: 'trad' },
+            "德泂": { img: 'pixel_minister.png', filter: 'hue-rotate(240deg)', faction: 'trad' },
+            "仁垕": { img: 'pixel_minister.png', filter: 'contrast(1.4)', faction: 'reform' },
+            "時白": { img: 'pixel_minister_old.png', filter: 'sepia(0.6)', faction: 'trad' },
+            "景奭": { img: 'pixel_minister.png', filter: 'grayscale(0.6)', faction: 'trad' },
+            "植": { img: 'pixel_minister_old.png', filter: 'hue-rotate(300deg)', faction: 'trad' },
+            "壽賢": { img: 'pixel_minister.png', filter: 'hue-rotate(120deg)', faction: 'reform' },
+            "堉": { img: 'pixel_minister_old.png', filter: 'brightness(1.4)', faction: 'trad' },
+            "太和": { img: 'pixel_minister.png', filter: 'hue-rotate(60deg)', faction: 'trad' },
+            "楘": { img: 'pixel_minister_old.png', filter: 'invert(0.1)', faction: 'trad' },
+            "爾徵": { img: 'pixel_minister_old.png', filter: 'hue-rotate(150deg)', faction: 'trad' }
+        };
+        let currentIndex = -1;
+        let currentStanceBalance = 50; 
+        function init() {
+            const leftWing = document.getElementById('min-left');
+            const rightWing = document.getElementById('min-right');
+            Object.keys(ministersData).forEach(name => {
+                const data = ministersData[name];
+                const div = document.createElement('div');
+                div.className = 'character minister';
+                div.id = `char-${name}`;
+                div.style.setProperty('--bg-img', `url('${data.img}')`);
+                div.style.setProperty('--char-filter', data.filter);
+                div.innerHTML = `<div class="silhouette min-sil"></div><div class="name-tag">${name}</div>`;
+                if (data.faction === 'trad') leftWing.appendChild(div);
+                else rightWing.appendChild(div);
+            });
+            document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
+        }
+        function nextDialogue() {
+            currentIndex++;
+            if (currentIndex >= dialogue.length) return;
+            const entry = dialogue[currentIndex];
+            document.getElementById('speaker').innerText = entry.speaker;
+            document.getElementById('speech').innerText = entry.text;
+            document.querySelectorAll('.character').forEach(c => c.classList.remove('active'));
+            if (entry.speaker === "上") document.getElementById('char-king').classList.add('active');
+            else if (ministersData[entry.speaker]) document.getElementById(`char-${entry.speaker}`).classList.add('active');
+            const moodFill = document.getElementById('mood-fill');
+            moodFill.style.width = entry.mood + '%';
+            document.getElementById('king-mood-label').innerText = entry.mood >= 95 ? "王之意：震怒" : "王之意：尋思";
+            currentStanceBalance += entry.stance;
+            currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
+            document.getElementById('bar-traditional').style.width = (100 - currentStanceBalance) + '%';
+            document.getElementById('bar-reform').style.width = currentStanceBalance + '%';
+            if (entry.mood >= 95) {
+                document.getElementById('app').classList.add('shake');
+                setTimeout(() => document.getElementById('app').classList.remove('shake'), 400);
+            }
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>
