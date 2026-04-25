@@ -157,9 +157,10 @@ body {
 }
 
 .king-sil {
-    background-image: var(--bg-img, url('pixel_king.png'));
-    width: 320px;
-    height: 320px;
+    background-image: url('pixel_minister_old.png');
+    filter: sepia(1) saturate(12) hue-rotate(-55deg) brightness(0.9);
+    width: 380px;
+    height: 380px;
     image-rendering: pixelated;
 }
 
