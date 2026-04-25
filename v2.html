@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 震撼音效版</title>
+    <title>朝廷爭議 V2 - 精緻佈局版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,131 +18,142 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--paper-white); color: var(--ink-black); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
         
-        /* 音頻控制中心 */
-        .audio-controls {
-            position: fixed; top: 15px; right: 20px; z-index: 100001;
-            background: rgba(0,0,0,0.7); border: 1px solid var(--royal-gold);
-            padding: 10px 20px; border-radius: 30px;
-            display: none; align-items: center; gap: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        #audio-toggle { background: transparent; border: none; color: var(--royal-gold); cursor: pointer; font-weight: 900; font-size: 0.9rem; }
+        /* 音頻控制 */
+        .audio-controls { position: fixed; top: 15px; right: 20px; z-index: 100001; background: rgba(0,0,0,0.7); border: 1px solid var(--royal-gold); padding: 10px 20px; border-radius: 30px; display: none; align-items: center; gap: 15px; }
         #volume-slider { width: 80px; accent-color: var(--royal-gold); cursor: pointer; }
 
+        /* 序幕 */
         #intro-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .door { position: absolute; top: 0; width: 50vw; height: 100vh; background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); border: 1px solid rgba(241,196,15,0.1); transition: transform 2.5s cubic-bezier(0.7, 0, 0.3, 1); z-index: 1; }
+        .door { position: absolute; top: 0; width: 50vw; height: 100vh; background: #1a1a1a; transition: transform 2.5s cubic-bezier(0.7, 0, 0.3, 1); z-index: 1; }
         .door-left { left: 0; border-right: 2px solid var(--royal-gold); }
         .door-right { right: 0; border-left: 2px solid var(--royal-gold); }
         #intro-overlay.open .door-left { transform: translateX(-100%); }
         #intro-overlay.open .door-right { transform: translateX(100%); }
-        #intro-content { position: relative; z-index: 2; text-align: center; color: #fff; max-width: 850px; transition: opacity 1s; }
-        .intro-text { font-size: 2.2rem; font-weight: 700; line-height: 2.2; margin-bottom: 25px; opacity: 0; transform: translateY(30px); transition: all 1.2s; }
-        .intro-text.visible { opacity: 1; transform: translateY(0); }
-        #start-btn { margin-top: 60px; padding: 18px 80px; font-size: 1.6rem; font-weight: 900; background: transparent; color: var(--royal-gold); border: 2px solid var(--royal-gold); cursor: pointer; opacity: 0; transition: all 0.6s; letter-spacing: 8px; }
+        #intro-content { position: relative; z-index: 2; text-align: center; color: #fff; }
+        .intro-text { font-size: 2rem; font-weight: 700; line-height: 2; margin-bottom: 20px; opacity: 0; transition: 1.2s; }
+        .intro-text.visible { opacity: 1; }
+        #start-btn { margin-top: 40px; padding: 15px 60px; font-size: 1.4rem; color: var(--royal-gold); border: 2px solid var(--royal-gold); background: transparent; cursor: pointer; opacity: 0; transition: 0.6s; }
         #start-btn.visible { opacity: 1; }
 
-        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; transform: scale(1.1); filter: blur(5px); transition: all 2.5s cubic-bezier(0.7, 0, 0.3, 1); opacity: 0; }
-        #app.visible { transform: scale(1); filter: blur(0); opacity: 1; }
+        /* 主界面 */
+        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; opacity: 0; transition: 2s; }
+        #app.visible { opacity: 1; }
         
-        .status-bar { height: 60px; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 2px solid #ddd; z-index: 1000; gap: 5px; }
-        .bar-labels { display: flex; justify-content: space-between; width: 50%; font-weight: 900; font-size: 0.9rem; color: #666; }
-        .stance-container { width: 50%; height: 10px; background: #eee; border-radius: 5px; overflow: hidden; display: flex; }
-        .stance { transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .status-bar { height: 50px; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 1px solid #ddd; z-index: 1000; }
+        .stance-container { width: 40%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; display: flex; }
+        .stance { transition: 0.8s; }
         .traditionalists { background: #2980b9; }
         .reformists { background: #c0392b; }
 
-        .court-layout { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 30px; }
+        .court-layout { flex: 1; display: flex; flex-direction: column; padding: 10px 20px; gap: 15px; justify-content: flex-start; }
+        
+        /* 徽章縮小 */
         .badge-circle { 
-            width: 100px; height: 100px; border-radius: 50%; 
+            width: 85px; height: 85px; border-radius: 50%; 
             display: flex; justify-content: center; align-items: center;
             background: var(--minister-gray); color: #fff;
-            font-size: 1.8rem; font-weight: 900;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer; border: 4px solid #fff;
+            font-size: 1.5rem; font-weight: 900;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; border: 3px solid #fff;
         }
-        .royal .badge-circle { width: 130px; height: 130px; background: var(--royal-red); border-color: var(--royal-gold); font-size: 2.2rem; }
-        .character.active .badge-circle { transform: scale(1.2); box-shadow: 0 0 40px rgba(0,0,0,0.3); z-index: 10; border-color: var(--royal-gold); }
-        .character.angry .badge-circle { animation: pulse-red 0.5s infinite; background: var(--angry-red) !important; }
-
-        .dialogue-center { height: 260px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 0 20px 40px 20px; gap: 15px; }
-        .dialogue-box { width: 100%; max-width: 900px; background: #fff; border-radius: 15px; padding: 30px 60px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border: 5px solid #333; cursor: pointer; text-align: left; position: relative; }
-        .speaker-box { position: absolute; top: -25px; left: 40px; background: #333; color: #fff; padding: 8px 35px; border-radius: 5px; font-weight: 900; font-size: 1.4rem; box-shadow: 6px 6px 0px var(--gold); }
-        .speech-text { font-size: 1.9rem; line-height: 1.6; color: #000; font-weight: 700; min-height: 2.4em; }
-
-        .term { color: var(--gold); border-bottom: 2px solid var(--gold); cursor: help; font-weight: 900; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200000; display: none; }
-        #wiki-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 480px; background: #fff; border-radius: 20px; padding: 40px; border: 5px solid var(--gold); z-index: 200001; display: none; }
+        .royal .badge-circle { width: 110px; height: 110px; background: var(--royal-red); border-color: var(--royal-gold); font-size: 1.9rem; }
         
-        .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.05) 1deg 2deg); z-index: -1; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
-        .speed-lines.active { opacity: 1; }
+        /* 發言高亮強化 */
+        .character.active .badge-circle { 
+            transform: scale(1.4); 
+            box-shadow: 0 0 30px var(--royal-gold); 
+            border-color: var(--royal-gold); 
+            z-index: 100;
+            animation: speaker-bounce 2s infinite ease-in-out;
+        }
+        #char-仁祖.active .badge-circle {
+            transform: scale(1.5);
+            box-shadow: 0 0 50px var(--royal-red);
+            border-width: 5px;
+        }
+        @keyframes speaker-bounce { 0%, 100% { transform: scale(1.4) translateY(0); } 50% { transform: scale(1.45) translateY(-5px); } }
+        #char-仁祖.active .badge-circle { animation: royal-bounce 2s infinite ease-in-out; }
+        @keyframes royal-bounce { 0%, 100% { transform: scale(1.5) translateY(0); } 50% { transform: scale(1.55) translateY(-8px); } }
+
+        .character.angry .badge-circle { animation: pulse-red 0.5s infinite; background: var(--angry-red) !important; }
+        @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 15px var(--angry-red); } 50% { box-shadow: 0 0 45px var(--angry-red); } }
+
+        .royal-row { display: flex; justify-content: center; align-items: center; gap: 40px; height: 150px; }
+        .ministers-floor { display: flex; flex-direction: column; gap: 15px; flex: 1; max-height: 40vh; overflow-y: auto; }
+        .avatars-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 10px; }
+
+        /* 文本框位置優化 */
+        .dialogue-center { 
+            height: 280px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start; 
+            align-items: center; 
+            padding: 0 20px 20px 20px; 
+            gap: 15px;
+            margin-top: -10px; /* 向上提拉 */
+        }
+        .dialogue-box { width: 100%; max-width: 900px; background: #fff; border-radius: 15px; padding: 25px 50px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); border: 4px solid #333; cursor: pointer; text-align: left; position: relative; }
+        .speaker-box { position: absolute; top: -20px; left: 30px; background: #333; color: #fff; padding: 6px 30px; border-radius: 4px; font-weight: 900; font-size: 1.2rem; }
+        .speech-text { font-size: 1.8rem; line-height: 1.5; color: #000; font-weight: 700; min-height: 2.2em; }
+
+        .controls { display: flex; gap: 15px; width: 100%; max-width: 900px; justify-content: flex-end; }
+        .btn-control { background: #333; color: #fff; border: none; padding: 8px 25px; border-radius: 6px; font-weight: 900; cursor: pointer; }
+
+        .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0; transition: 0.2s; pointer-events: none; }
+        .speed-lines.active { opacity: 1; background: repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.05) 1deg 2deg); }
         #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
         .flash-active { animation: flash-anim 0.3s forwards; }
-        @keyframes flash-anim { 0% { opacity: 1; } 100% { opacity: 0; } }
-        @keyframes screen-shake { 0%, 100% { transform: translate(0,0); } 10%, 30%, 50%, 70%, 90% { transform: translate(-8px,-8px); } 20%, 40%, 60%, 80% { transform: translate(8px,8px); } }
+        @keyframes screen-shake { 0%, 100% { transform: translate(0,0); } 10%, 50%, 90% { transform: translate(-5px,-5px); } 30%, 70% { transform: translate(5px,5px); } }
         .shake-screen { animation: screen-shake 0.4s ease-in-out; }
     </style>
 </head>
 <body>
-    <!-- 音頻系統 -->
-    <audio id="bgm" loop preload="auto"><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg"></audio>
-    <audio id="sfx-slam" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-table-slam-sound-2507.mp3" type="audio/mpeg"></audio>
-    <audio id="sfx-sting" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-suspense-mystery-bass-hit-600.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg"></audio>
+    <audio id="sfx-slam"><source src="https://assets.mixkit.co/sfx/preview/mixkit-table-slam-sound-2507.mp3" type="audio/mpeg"></audio>
+    <audio id="sfx-sting"><source src="https://assets.mixkit.co/sfx/preview/mixkit-suspense-mystery-bass-hit-600.mp3" type="audio/mpeg"></audio>
     <audio id="sfx-type" loop><source src="https://assets.mixkit.co/sfx/preview/mixkit-keyboard-typing-616.mp3" type="audio/mpeg"></audio>
 
     <div class="audio-controls" id="audio-ui">
-        <button id="audio-toggle" onclick="toggleAudio()">🔈 播放中</button>
+        <button id="audio-toggle" onclick="toggleAudio()">🔈 音效</button>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" oninput="adjustVolume(this.value)">
     </div>
 
-    <!-- 序幕 -->
     <div id="intro-overlay">
         <div class="door door-left"></div><div class="door door-right"></div>
         <div id="intro-content">
             <p class="intro-text" id="t1">朝鮮仁祖二十三年（1645年）</p>
             <p class="intro-text" id="t2">歸國不久的昭顯世子暴斃宮中</p>
-            <p class="intro-text" id="t3">宗法與權力的齒輪開始瘋狂轉向</p>
-            <p class="intro-text" id="t4">是遵循「世嫡承統」之常經？</p>
-            <p class="intro-text" id="t5">還是行使「國有長君」之權變？</p>
-            <p class="intro-text" id="t6" style="color:var(--royal-gold)">歷史的轉折，全於此。</p>
+            <p class="intro-text" id="t3" style="color:var(--royal-gold)">歷史的轉折，全在於此。</p>
             <button id="start-btn" onclick="openPalaceGates()">推門旁聽辯論</button>
         </div>
     </div>
 
     <div id="flash"></div>
     <div id="app">
-        <div class="speed-lines" id="speed-lines"></div>
         <header class="status-bar">
-            <div class="bar-labels"><span>守經 (Traditional)</span><span>擇立 (Reform)</span></div>
             <div class="stance-container"><div class="stance traditionalists" id="bar-traditional" style="width: 50%;"></div><div class="stance reformists" id="bar-reform" style="width: 50%;"></div></div>
         </header>
         <main class="court-layout" id="main-stage">
             <div class="royal-row">
-                <div class="character royal" id="char-仁祖" onclick="showWiki('仁祖')"><div class="badge-circle">仁祖</div></div>
-                <div class="character royal" id="char-鳳林" onclick="showWiki('鳳林')"><div class="badge-circle">鳳林</div></div>
-                <div class="character royal" id="char-麟坪" onclick="showWiki('麟坪')"><div class="badge-circle">麟坪</div></div>
-                <div class="character royal" id="char-世孫" onclick="showWiki('世孫')"><div class="badge-circle">世孫</div></div>
+                <div class="character royal" id="char-仁祖"><div class="badge-circle">仁祖</div></div>
+                <div class="character royal" id="char-鳳林"><div class="badge-circle">鳳林</div></div>
+                <div class="character royal" id="char-麟坪"><div class="badge-circle">麟坪</div></div>
+                <div class="character royal" id="char-世孫"><div class="badge-circle">世孫</div></div>
             </div>
-            <div class="ministers-floor">
-                <div class="minister-group" id="group-b"><div class="avatars-grid" id="min-b"></div></div>
-                <div class="minister-group" id="group-a"><div class="avatars-grid" id="min-a"></div></div>
-                <div class="minister-group" id="group-c"><div class="avatars-grid" id="min-c"></div></div>
-            </div>
+            <div class="ministers-floor"><div class="avatars-grid" id="min-grid"></div></div>
             <div class="dialogue-center">
                 <section class="dialogue-box" id="dialogue-box">
                     <div class="speaker-box" id="speaker">宮廷史官</div>
-                    <div class="speech-text" id="speech">點擊開始...</div>
+                    <div class="speech-text" id="speech">...</div>
                 </section>
                 <div class="controls"><button class="btn-control" id="btn-prev" disabled>◀ Back</button><button class="btn-control" id="btn-next">Next ▶</button></div>
             </div>
         </main>
     </div>
 
-    <div class="modal-overlay" id="wiki-overlay" onclick="closeWiki()"></div>
-    <div id="wiki-modal"><h2 id="wiki-title"></h2><p id="wiki-content"></p><button class="close-wiki-btn" onclick="closeWiki()">返回辯論</button></div>
-
     <script>
-        const wikiData = { "仁祖": "朝鮮第16代君主...", "元孫": "昭顯世子長子...", "世孫": "即元孫...", "鳳林": "仁祖次子...", "金瑬": "領議政...", "金自點": "權臣...", "洪瑞鳳": "左議政..." };
         const dialogue = [
             { speaker: "上", text: "予有宿疾，往往而劇，元孫如彼其微弱. 予觀今日之形勢，不可以待小兒之成長. 未知卿等之意以爲何如？", special: "shake", stance: 5 },
             { speaker: "瑬", text: "朝野方頌岡陵之祝，而殿下遽出此言，臣等罔知所達。", stance: -2 },
@@ -151,7 +162,6 @@
             { speaker: "上", text: "（謂瑬曰）此事專在於領相，卿其決之。", special: "flash", stance: 10 },
             { speaker: "上", text: "（厲聲曰）此事必須與大臣決之. 卿等但為此常談，一朝若不諱，卿等何以為計耶？", special: "shake", stance: 15 },
             { speaker: "上", text: "以鳳林大君為世子。", special: "flash", stance: 20 }
-            // ... 省略其他 44 段對話以節省空間，實際運行包含全部 51 段
         ];
 
         function openPalaceGates() {
@@ -162,26 +172,10 @@
             setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 3000);
         }
 
-        function toggleAudio() {
-            const bgm = document.getElementById('bgm'), btn = document.getElementById('audio-toggle');
-            if (bgm.paused) { bgm.play(); btn.innerText = "🔈 播放中"; }
-            else { bgm.pause(); btn.innerText = "🔇 已靜音"; }
-        }
-
-        function adjustVolume(val) {
-            document.getElementById('bgm').volume = val;
-            document.getElementById('sfx-slam').volume = val;
-            document.getElementById('sfx-sting').volume = val;
-            document.getElementById('sfx-type').volume = val * 0.3;
-        }
-
-        function playSFX(id) {
-            const sound = document.getElementById(id);
-            sound.currentTime = 0; sound.play();
-        }
+        function adjustVolume(v) { document.getElementById('bgm').volume = v; document.getElementById('sfx-slam').volume = v; document.getElementById('sfx-sting').volume = v; document.getElementById('sfx-type').volume = v*0.2; }
+        function toggleAudio() { const b = document.getElementById('bgm'); if(b.paused){b.play(); this.innerText="🔈 音效";}else{b.pause(); this.innerText="🔇 靜音";} }
 
         let currentIndex = -1, isTyping = false, typingTimer = null, currentStanceBalance = 50;
-
         function updateUI() {
             const entry = dialogue[currentIndex];
             document.getElementById('speaker').innerText = entry.speaker;
@@ -193,47 +187,27 @@
                 else { clearInterval(typingTimer); document.getElementById('sfx-type').pause(); isTyping = false; }
             }, 30);
 
-            if (entry.special === "shake" || entry.stance >= 12) { playSFX('sfx-slam'); triggerSpecial("shake"); }
-            if (entry.special === "flash" || entry.stance <= -10) { playSFX('sfx-sting'); triggerSpecial("flash"); }
-            if (entry.special === "speed") triggerSpecial("speed");
+            if (entry.special === "shake" || entry.stance >= 12) { document.getElementById('sfx-slam').play(); document.getElementById('main-stage').classList.add('shake-screen'); setTimeout(()=>document.getElementById('main-stage').classList.remove('shake-screen'), 400); }
+            if (entry.special === "flash" || entry.stance <= -10) { document.getElementById('sfx-sting').play(); document.getElementById('flash').classList.add('flash-active'); setTimeout(()=>document.getElementById('flash').classList.remove('flash-active'), 300); }
 
             currentStanceBalance += (entry.stance || 0);
-            currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
             document.getElementById('bar-traditional').style.width = (100 - currentStanceBalance) + '%';
             document.getElementById('bar-reform').style.width = currentStanceBalance + '%';
-            document.querySelectorAll('.character').forEach(c => { c.classList.remove('active'); c.classList.remove('angry'); });
-            let targetId = (entry.speaker === "上") ? 'char-仁祖' : `char-${entry.speaker}`;
-            if (document.getElementById(targetId)) {
-                const el = document.getElementById(targetId); el.classList.add('active');
-                if (entry.stance >= 12) el.classList.add('angry');
-            }
+            
+            document.querySelectorAll('.character').forEach(c => c.classList.remove('active'));
+            let tid = (entry.speaker === "上") ? 'char-仁祖' : `char-${entry.speaker}`;
+            if (document.getElementById(tid)) document.getElementById(tid).classList.add('active');
         }
-
-        function triggerSpecial(type) {
-            const stage = document.getElementById('main-stage'), flash = document.getElementById('flash'), speed = document.getElementById('speed-lines');
-            if (type === "shake") { stage.classList.add('shake-screen'); setTimeout(() => stage.classList.remove('shake-screen'), 400); }
-            else if (type === "flash") { flash.classList.add('flash-active'); setTimeout(() => flash.classList.remove('flash-active'), 300); }
-            else if (type === "speed") { speed.classList.add('active'); setTimeout(() => speed.classList.remove('active'), 1000); }
-        }
-
-        function nextDialogue() {
-            if (isTyping) { clearInterval(typingTimer); document.getElementById('sfx-type').pause(); document.getElementById('speech').innerHTML = dialogue[currentIndex].text; isTyping = false; return; }
-            if (currentIndex < dialogue.length - 1) { currentIndex++; updateUI(); }
-        }
-
-        function showWiki(t) { document.getElementById('wiki-title').innerText = t; document.getElementById('wiki-content').innerText = wikiData[t] || "..."; document.getElementById('wiki-modal').style.display='block'; document.getElementById('wiki-overlay').style.display='block'; }
-        function closeWiki() { document.getElementById('wiki-modal').style.display='none'; document.getElementById('wiki-overlay').style.display='none'; }
 
         function init() {
             const ministers = ["瑬","自點","瑞鳳","敬輿","景奭","堉","悦","壽賢","太和","楘","爾徵","德泂","仁垕","時白","植"];
-            ministers.forEach(name => {
-                const div = document.createElement('div'); div.className = 'character minister'; div.id = `char-${name}`; div.onclick = () => showWiki(name);
-                div.innerHTML = `<div class="badge-circle">${name}</div>`;
-                document.getElementById('min-a').appendChild(div); // 簡化佈局
+            ministers.forEach(n => {
+                const d = document.createElement('div'); d.className = 'character minister'; d.id = `char-${n}`;
+                d.innerHTML = `<div class="badge-circle">${n}</div>`; document.getElementById('min-grid').appendChild(d);
             });
-            document.getElementById('dialogue-box').onclick = nextDialogue;
-            document.getElementById('btn-next').onclick = nextDialogue;
-            window.onkeydown = (e) => { if(e.code==="Space") { e.preventDefault(); nextDialogue(); } };
+            document.getElementById('dialogue-box').onclick = () => { if(isTyping){clearInterval(typingTimer); document.getElementById('sfx-type').pause(); document.getElementById('speech').innerHTML = dialogue[currentIndex].text; isTyping=false;} else if(currentIndex < dialogue.length-1){currentIndex++; updateUI();} };
+            document.getElementById('btn-next').onclick = document.getElementById('dialogue-box').onclick;
+            window.onkeydown = (e) => { if(e.code==="Space") { e.preventDefault(); document.getElementById('dialogue-box').click(); } };
             const texts = document.querySelectorAll('.intro-text');
             texts.forEach((t, i) => setTimeout(() => t.classList.add('visible'), i * 1500 + 500));
             setTimeout(() => document.getElementById('start-btn').classList.add('visible'), texts.length * 1500 + 1000);
