@@ -53,6 +53,18 @@
         .reformists { background: linear-gradient(90deg, var(--royal-red), #e74c3c); box-shadow: 0 0 20px rgba(192,57,43,0.4); }
         .bar-center-line { position: absolute; left: 50%; top: -5px; width: 4px; height: 28px; background: var(--royal-gold); z-index: 10; box-shadow: 0 0 10px var(--royal-gold); }
 
+        /* 血條說明 */
+        .stance-label { position: relative; cursor: help; }
+        .stance-label::after {
+            content: "守經派主張遵循傳統嫡長制｜擇立派主張根據實際情況立長君";
+            position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%);
+            width: 300px; background: rgba(0,0,0,0.9); color: #fff; padding: 8px 12px;
+            border-radius: 5px; font-size: 0.7rem; white-space: normal;
+            z-index: 1000; display: none; pointer-events: none;
+            border: 1px solid var(--royal-gold);
+        }
+        .stance-label:hover::after { display: block; }
+
         .court-layout { flex: 1; display: flex; flex-direction: column; padding: 10px 40px; gap: 15px; justify-content: space-between; }
         
         .badge-circle { 
@@ -77,11 +89,13 @@
 
         /* 文本框 */
         .dialogue-center { width: 100%; height: 340px; display: flex; flex-direction: column; align-items: center; padding: 0 20px 30px 20px; gap: 15px; margin-top: 0; }
+        .progress-indicator { font-size: 0.9rem; color: #888; font-weight: 900; letter-spacing: 2px; }
         .dialogue-box { width: 100%; max-width: 950px; background: #fff; border-radius: 15px; padding: 30px 60px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border: 5px solid #333; cursor: pointer; text-align: left; position: relative; }
         .speaker-box { position: absolute; top: -25px; left: 40px; background: #333; color: #fff; padding: 8px 35px; border-radius: 5px; font-weight: 900; font-size: 1.4rem; box-shadow: 6px 6px 0px var(--gold); }
         .speech-text { font-size: 2rem; line-height: 1.6; color: #000; font-weight: 700; min-height: 2.2em; }
-        .controls { display: flex; gap: 20px; width: 100%; max-width: 950px; justify-content: flex-end; }
+        .controls { display: flex; gap: 20px; width: 100%; max-width: 950px; justify-content: space-between; align-items: center; }
         .btn-control { background: #333; color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); }
+        .restart-btn { background: var(--royal-red); padding: 8px 20px; font-size: 0.9rem; }
 
         /* 不可！ 特效 - 純粹紅字風格 */
         #objection-bubble {
@@ -132,9 +146,10 @@
             <p class="intro-text" id="t1">朝鮮仁祖二十三年（1645年）</p>
             <p class="intro-text" id="t2">歸國不久的昭顯世子暴斃宮中</p>
             <p class="intro-text" id="t3">宗法與權力的齒輪開始瘋狂轉向</p>
-            <p class="intro-text" id="t4">是遵循「世嫡承統」之常經？</p>
-            <p class="intro-text" id="t5">還是行使「國有長君」之權變？</p>
-            <p class="intro-text" id="t6" style="color:var(--royal-gold)">歷史的轉折，全在於此。</p>
+            <p class="intro-text" id="t4">仁祖晚年體衰，欲立長君以穩宗統</p>
+            <p class="intro-text" id="t5">但此舉挑戰千年嫡長制傳統</p>
+            <p class="intro-text" id="t6">守經派與擇立派的激烈交鋒即將上演</p>
+            <p class="intro-text" id="t7" style="color:var(--royal-gold)">歷史的轉折，全在於此。</p>
             <button id="start-btn" onclick="openPalaceGates()">推門旁聽辯論</button>
         </div>
     </div>
@@ -171,13 +186,17 @@
             </div>
 
             <div class="dialogue-center">
+                <div class="progress-indicator"><span id="progress-text">0/51</span></div>
                 <section class="dialogue-box" id="dialogue-box">
                     <div class="speaker-box" id="speaker">宮廷史官</div>
                     <div class="speech-text" id="speech">...</div>
                 </section>
                 <div class="controls">
-                    <button class="btn-control" id="btn-prev" disabled>◀ Back</button>
-                    <button class="btn-control" id="btn-next">Next ▶</button>
+                    <button class="btn-control restart-btn" onclick="restartDebate()">↻ 重新開始</button>
+                    <div style="display: flex; gap: 20px;">
+                        <button class="btn-control" id="btn-prev" disabled>◀ Back</button>
+                        <button class="btn-control" id="btn-next">Next ▶</button>
+                    </div>
                 </div>
             </div>
         </main>
@@ -259,7 +278,10 @@
             { speaker: "瑬", text: "此外更無可議，須明白下教，使群臣明知之。", stance: 5 },
             { speaker: "上", text: "以鳳林大君為世子。", special: "flash", stance: 20 },
             { speaker: "自點", text: "當捧承傳乎？", stance: 5 },
-            { speaker: "史官", text: "（左右竊笑）上曰：『無庸為也。』瑬請令禮曹奉行，上曰：『徐為之未晚也。』", stance: 0 }
+            { speaker: "史官", text: "（左右竊笑）上曰：『無庸為也。』瑬請令禮曹奉行，上曰：『徐為之未晚也。』", stance: 0 },
+            { speaker: "歷史評述", text: "【廷議終結】仁祖終於下定決心。鳳林大君被正式立為世子，打破千年嫡長制傳統。守經派的反對未能阻止權變之舉的實現。", stance: 0 },
+            { speaker: "歷史評述", text: "【歷史影響】鳳林後繼位為孝宗，成為朝鮮著名的改革君主，推行一系列革新政策。此次廷議的勝負，深刻改變了朝鮮的政治走向。", stance: 0 },
+            { speaker: "歷史評述", text: "【派系消長】擇立派的勝利象徵著現實政治對傳統理論的挑戰。此後朝鮮黨爭愈發激烈，守經派與權變派的鬥爭貫穿整個肅宗時代。", stance: 0 }
         ];
 
         const ministersData = { "瑬": "a", "自點": "a", "瑞鳳": "b", "敬輿": "b", "景奭": "b", "堉": "b", "悦": "c", "壽賢": "c", "太和": "c", "楘": "c", "爾徵": "c", "德泂": "c", "仁垕": "c", "時白": "c", "植": "c" };
@@ -277,6 +299,7 @@
 
         let currentIndex = -1, isTyping = false, typingTimer = null, currentStanceBalance = 50;
         function updateUI() {
+            document.getElementById('progress-text').innerText = (currentIndex + 1) + '/' + dialogue.length;
             const entry = dialogue[currentIndex];
             document.getElementById('speaker').innerText = entry.speaker;
             if (typingTimer) clearInterval(typingTimer);
@@ -285,7 +308,7 @@
             typingTimer = setInterval(() => {
                 if (i < entry.text.length) { document.getElementById('speech').innerHTML += entry.text.charAt(i); i++; }
                 else { clearInterval(typingTimer); document.getElementById('sfx-type').pause(); document.getElementById('speech').innerHTML = formatText(document.getElementById('speech').innerHTML); isTyping = false; }
-            }, 30);
+            }, 20);
 
             if (entry.special === "objection") {
                 document.getElementById('action-lines').classList.add('active');
@@ -318,6 +341,16 @@
         function formatText(text) { let res = text; Object.keys(wikiData).forEach(k => { res = res.replace(new RegExp(k, 'g'), `<span class="term" onclick="event.stopPropagation(); showWiki('${k}')">${k}</span>`); }); return res; }
         function showWiki(t) { document.getElementById('wiki-title').innerText = t; document.getElementById('wiki-content').innerText = wikiData[t] || "..."; document.getElementById('wiki-modal').style.display='block'; document.getElementById('wiki-overlay').style.display='block'; }
         function closeWiki() { document.getElementById('wiki-modal').style.display='none'; document.getElementById('wiki-overlay').style.display='none'; }
+
+        function restartDebate() {
+            currentIndex = -1;
+            currentStanceBalance = 50;
+            document.getElementById('bar-traditional').style.width = '50%';
+            document.getElementById('bar-reform').style.width = '50%';
+            document.getElementById('speech').innerText = '點擊屏幕開始';
+            document.getElementById('progress-text').innerText = '0/51';
+            document.getElementById('btn-prev').disabled = true;
+        }
 
 
         function init() {
