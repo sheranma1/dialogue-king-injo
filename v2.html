@@ -39,6 +39,12 @@
         
         /* 恢復全身像比例 */
         .king-sil { background-position: 0% 0%; width: 140px; height: 220px; }
+        .bongnim-sil { 
+            background-image: url('bongnim.png'); 
+            background-size: contain; 
+            background-repeat: no-repeat;
+            width: 120px; height: 180px; 
+        }
         .min-sil { background-position: var(--pos-x, 0%) var(--pos-y, 0%); width: 110px; height: 180px; clip-path: inset(0 0 15% 0); }
         .name-tag { margin-top: 4px; font-size: 10px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 1px 4px; }
 
@@ -81,6 +87,11 @@
                 <div class="character king" id="char-king">
                     <div class="silhouette king-sil"></div>
                     <div class="name-tag">上 (仁祖)</div>
+                </div>
+                <!-- 鳳林大君站位 -->
+                <div class="character bongnim" id="char-bongnim" style="margin-top: 50px; margin-left: 20px;">
+                    <div class="silhouette bongnim-sil"></div>
+                    <div class="name-tag">鳳林大君</div>
                 </div>
             </div>
             <div class="ministers-floor">
@@ -236,6 +247,11 @@
             document.querySelectorAll('.character').forEach(c => c.classList.remove('active'));
             if (entry.speaker === "上") document.getElementById('char-king').classList.add('active');
             else if (ministersData[entry.speaker]) document.getElementById(`char-${entry.speaker}`).classList.add('active');
+            
+            // 鳳林大君聯動：提到他時高亮
+            if (entry.text.includes("鳳林大君") || entry.text.includes("大君") || entry.text.includes("擇立")) {
+                document.getElementById('char-bongnim').classList.add('active');
+            }
             
             const moodFill = document.getElementById('mood-fill');
             if (moodFill) moodFill.style.width = (entry.mood || 0) + '%';
