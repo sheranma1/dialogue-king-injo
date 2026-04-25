@@ -24,7 +24,7 @@
         #volume-slider { width: 80px; accent-color: var(--royal-gold); cursor: pointer; }
 
         /* 序幕與宮門 */
-        #intro-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        #intro-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; overflow: hidden; display: flex; justify-content: center; align-items: center; opacity: 1; transition: opacity 0.5s ease-out; }
         .door { position: absolute; top: 0; width: 50.5vw; height: 100vh; background: #000; transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1; }
         .door-left { left: 0; border-right: 3px solid var(--royal-gold); }
         .door-right { right: 0; border-left: 3px solid var(--royal-gold); }
@@ -290,8 +290,9 @@
             document.getElementById('intro-overlay').classList.add('open');
             document.getElementById('bgm').play();
             document.getElementById('audio-ui').style.display = 'flex';
-            setTimeout(() => document.getElementById('app').classList.add('visible'), 500);
-            setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 3500);
+            setTimeout(() => document.getElementById('app').classList.add('visible'), 1500);
+            setTimeout(() => { document.getElementById('intro-overlay').style.pointerEvents = 'none'; document.getElementById('intro-overlay').style.opacity = '0'; }, 1700);
+            setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 2000);
         }
 
         function adjustVolume(v) { document.getElementById('bgm').volume = v; document.getElementById('sfx-slam').volume = v; document.getElementById('sfx-sting').volume = v; document.getElementById('sfx-objection').volume = v; document.getElementById('sfx-type').volume = v*0.2; }
