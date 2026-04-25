@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 極簡徽章版</title>
+    <title>朝廷爭議 V2 - 史詩開篇版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -17,10 +17,33 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--paper-white); color: var(--ink-black); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
-        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
+        
+        /* 開場動畫層 */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle, #2c3e50 0%, #000 100%);
+            color: #fff; z-index: 100000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; transition: opacity 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        #intro-content { max-width: 800px; padding: 40px; }
+        .intro-text { font-size: 2rem; font-weight: 700; line-height: 2; margin-bottom: 20px; opacity: 0; transform: translateY(20px); transition: all 1s; }
+        .intro-text.visible { opacity: 1; transform: translateY(0); }
+        #start-btn { 
+            margin-top: 50px; padding: 15px 60px; font-size: 1.5rem; font-weight: 900;
+            background: transparent; color: var(--royal-gold); border: 2px solid var(--royal-gold);
+            cursor: pointer; opacity: 0; transition: all 0.5s; letter-spacing: 5px;
+        }
+        #start-btn:hover { background: var(--royal-gold); color: #000; box-shadow: 0 0 30px var(--royal-gold); }
+        #start-btn.visible { opacity: 1; }
+
+        /* 主界面層 */
+        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; opacity: 0; transition: opacity 2s; }
+        #app.visible { opacity: 1; }
         
         .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.05) 1deg 2deg); z-index: -1; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
         .speed-lines.active { opacity: 1; }
+        .palace-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #fff 0%, #fcfaf2 100%); z-index: -2; }
 
         #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
         .flash-active { animation: flash-anim 0.3s forwards; }
@@ -38,7 +61,6 @@
 
         .court-layout { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 30px; }
         
-        /* 姓名徽章 */
         .badge-circle { 
             width: 100px; height: 100px; border-radius: 50%; 
             display: flex; justify-content: center; align-items: center;
@@ -46,16 +68,12 @@
             font-size: 1.8rem; font-weight: 900;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer; border: 4px solid #fff;
-            position: relative;
+            cursor: pointer; border: 4px solid #fff; position: relative;
         }
         .royal .badge-circle { width: 130px; height: 130px; background: var(--royal-red); border-color: var(--royal-gold); font-size: 2.2rem; }
-        
         .character.active .badge-circle { transform: scale(1.2); box-shadow: 0 0 40px rgba(0,0,0,0.3); border-color: var(--royal-gold); z-index: 10; }
         .character.angry .badge-circle { animation: pulse-red 0.5s infinite; background: var(--angry-red) !important; }
         @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 10px var(--angry-red); } 50% { box-shadow: 0 0 40px var(--angry-red); } }
-
-        .name-caption { margin-top: 10px; font-weight: 900; color: #666; font-size: 1rem; }
 
         .royal-row { display: flex; justify-content: center; align-items: center; gap: 50px; height: 180px; }
         .ministers-floor { display: flex; justify-content: space-around; flex: 1; align-items: flex-start; }
@@ -69,13 +87,25 @@
 
         .controls { display: flex; gap: 20px; width: 100%; max-width: 900px; justify-content: flex-end; }
         .btn-control { background: #333; color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); transition: transform 0.1s; }
-        .btn-control:active { transform: translate(2px, 2px); }
 
         .term { color: var(--gold); border-bottom: 2px solid var(--gold); cursor: help; }
         #wiki-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 450px; background: #fff; border-radius: 20px; padding: 35px; border: 4px solid var(--gold); z-index: 20000; display: none; }
     </style>
 </head>
 <body>
+    <!-- 開場動畫層 -->
+    <div id="intro-overlay">
+        <div id="intro-content">
+            <p class="intro-text" id="t1">朝鮮仁祖二十三年（1645年）</p>
+            <p class="intro-text" id="t2">歸國不久的昭顯世子暴斃宮中</p>
+            <p class="intro-text" id="t3">宗法與權力的齒輪開始瘋狂轉向</p>
+            <p class="intro-text" id="t4">是遵循「世嫡承統」之常經？</p>
+            <p class="intro-text" id="t5">還是行使「國有長君」之權變？</p>
+            <p class="intro-text" id="t6" style="color:var(--royal-gold)">歷史的轉折，全在於此。</p>
+            <button id="start-btn" onclick="startExperience()">進入歷史現場</button>
+        </div>
+    </div>
+
     <div id="flash"></div>
     <div id="app">
         <div class="speed-lines" id="speed-lines"></div>
@@ -95,17 +125,15 @@
                 <div class="character royal" id="char-inpyeong"><div class="badge-circle">麟坪</div></div>
                 <div class="character royal" id="char-sesun"><div class="badge-circle">世孫</div></div>
             </div>
-
             <div class="ministers-floor">
                 <div class="minister-group" id="group-b"><div class="avatars-grid" id="min-b"></div></div>
                 <div class="minister-group" id="group-a"><div class="avatars-grid" id="min-a"></div></div>
                 <div class="minister-group" id="group-c"><div class="avatars-grid" id="min-c"></div></div>
             </div>
-
             <div class="dialogue-center">
                 <section class="dialogue-box" id="dialogue-box">
                     <div class="speaker-box" id="speaker">宮廷史官</div>
-                    <div class="speech-text" id="speech">點擊或按空格鍵開始。</div>
+                    <div class="speech-text" id="speech">仁祖二十三年閏六月初二日，大殿會議。</div>
                 </section>
                 <div class="controls">
                     <button class="btn-control" id="btn-prev" disabled>◀ Back</button>
@@ -115,7 +143,6 @@
         </main>
     </div>
 
-    <div class="modal-overlay" id="wiki-overlay" onclick="closeWiki()"></div>
     <div id="wiki-modal">
         <h2 id="wiki-title"></h2>
         <p id="wiki-content"></p>
@@ -137,7 +164,7 @@
             { speaker: "瑬", text: "今此下教，雖出於爲宗社之大計，而臣等惶惑不知所言，宜博詢諸臣。", stance: -2 },
             { speaker: "瑞鳳", text: "考諸往牒，太子不在，繼以太孫，此乃不易之常經。反常行權，恐非國家之福。", special: "shake", stance: -10 },
             { speaker: "上", text: "雖在治平之世，必以國有長君爲福，況今日乎？", stance: 5 },
-            { speaker: "悦", text: "瑞鳳之言，正合臣意。殿下雖有微恙，春秋鼎盛，元孫雖曰微弱，已至十歲。自古幼主之繼緒者何限？宗統甚重，恐不可輕議也。", stance: -6 },
+            { speaker: "悦", text: "瑞鳳之言，正合臣意。殿下雖有微恙，春秋鼎盛，元孫雖曰微弱，已至十歲。宗統甚重，恐不可輕議也。", stance: -6 },
             { speaker: "自點", text: "殿下以疾病之未平、時事之艱虞，爲宗社、生民之大計，而發此言，宜更詢于諸臣而決之。", stance: 3 },
             { speaker: "敬輿", text: "臣之愚見，與瑞鳳無異。世嫡承統，今古之常經，常經之外更無所陳。大抵能守常經，則雖屬艱虞，而猶可以保國。若邊用權道，則群情不服而多致患難。今者擧國之係望於元孫已久，若聞此言，則中外人心，必皆波蕩，甚可懼也。", special: "shake", stance: -12 },
             { speaker: "上", text: "我世祖不傳於元孫，傳於睿宗，當時朝臣無異議，果皆不忠者耶？大臣當國家之大事，宜任其責，而徒以循常之談，為塞責之地，此豈大臣之道耶？", special: "shake", stance: 10 },
@@ -189,10 +216,23 @@
             "悦": "c", "壽賢": "c", "太和": "c", "楘": "c", "爾徵": "c", "德泂": "c", "仁垕": "c", "時白": "c", "植": "c"
         };
 
-        let currentIndex = -1;
-        let isTyping = false;
-        let typingTimer = null;
-        let currentStanceBalance = 50;
+        function startExperience() {
+            document.getElementById('intro-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('intro-overlay').style.display = 'none';
+                document.getElementById('app').classList.add('visible');
+            }, 1500);
+        }
+
+        function showIntroTexts() {
+            const texts = document.querySelectorAll('.intro-text');
+            texts.forEach((t, i) => {
+                setTimeout(() => t.classList.add('visible'), i * 1500 + 500);
+            });
+            setTimeout(() => document.getElementById('start-btn').classList.add('visible'), texts.length * 1500 + 1000);
+        }
+
+        let currentIndex = -1, isTyping = false, typingTimer = null, currentStanceBalance = 50;
 
         function typeText(element, text) {
             if (typingTimer) clearInterval(typingTimer);
@@ -205,9 +245,7 @@
         }
 
         function triggerSpecial(type) {
-            const stage = document.getElementById('main-stage');
-            const flash = document.getElementById('flash');
-            const speed = document.getElementById('speed-lines');
+            const stage = document.getElementById('main-stage'), flash = document.getElementById('flash'), speed = document.getElementById('speed-lines');
             if (type === "shake") { stage.classList.add('shake-screen'); setTimeout(() => stage.classList.remove('shake-screen'), 400); }
             else if (type === "flash") { flash.classList.add('flash-active'); setTimeout(() => flash.classList.remove('flash-active'), 300); }
             else if (type === "speed") { speed.classList.add('active'); setTimeout(() => speed.classList.remove('active'), 1000); }
@@ -218,31 +256,17 @@
             document.getElementById('speaker').innerText = entry.speaker;
             typeText(document.getElementById('speech'), entry.text);
             if (entry.special) triggerSpecial(entry.special);
-            
             currentStanceBalance += (entry.stance || 0);
             currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
             document.getElementById('bar-traditional').style.width = (100 - currentStanceBalance) + '%';
             document.getElementById('bar-reform').style.width = currentStanceBalance + '%';
-
-            document.querySelectorAll('.character').forEach(c => {
-                c.classList.remove('active');
-                c.classList.remove('angry');
-            });
-            
-            let targetId = "";
-            if (entry.speaker === "上") targetId = 'char-king';
-            else {
-                // 查找大臣對應的 ID
-                for (let name in ministersData) { if (name === entry.speaker) targetId = `char-${name}`; }
-            }
-
-            if (targetId) {
+            document.querySelectorAll('.character').forEach(c => { c.classList.remove('active'); c.classList.remove('angry'); });
+            let targetId = (entry.speaker === "上") ? 'char-king' : `char-${entry.speaker}`;
+            if (document.getElementById(targetId)) {
                 const el = document.getElementById(targetId);
                 el.classList.add('active');
                 if (entry.stance >= 12 || entry.special === "shake") el.classList.add('angry');
             }
-
-            // 聯動高亮
             if (entry.text.includes("鳳林")) document.getElementById('char-bongnim').classList.add('active');
             if (entry.text.includes("麟坪")) document.getElementById('char-inpyeong').classList.add('active');
             if (entry.text.includes("元孫") || entry.text.includes("世孫")) document.getElementById('char-sesun').classList.add('active');
@@ -253,36 +277,29 @@
             if (isTyping) { clearInterval(typingTimer); document.getElementById('speech').innerHTML = formatText(dialogue[currentIndex].text); isTyping = false; return; }
             if (currentIndex < dialogue.length - 1) { currentIndex++; updateUI(); }
         }
-
         function prevDialogue() {
             if (isTyping) clearInterval(typingTimer);
             if (currentIndex > 0) {
-                currentIndex--;
-                currentStanceBalance = 50;
+                currentIndex--; currentStanceBalance = 50;
                 for(let i=0; i<=currentIndex; i++) { currentStanceBalance += (dialogue[i].stance || 0); }
                 currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
                 updateUI();
             }
         }
-
-        function showWiki(term) { document.getElementById('wiki-title').innerText = term; document.getElementById('wiki-content').innerText = wikiData[term]; document.getElementById('wiki-modal').style.display = 'block'; document.getElementById('wiki-overlay').style.display = 'block'; }
-        function closeWiki() { document.getElementById('wiki-modal').style.display = 'none'; document.getElementById('wiki-overlay').style.display = 'none'; }
         function formatText(text) { let res = text; Object.keys(wikiData).forEach(k => { res = res.replace(new RegExp(k, 'g'), `<span class="term" onclick="event.stopPropagation(); showWiki('${k}')">${k}</span>`); }); return res; }
+        function showWiki(term) { alert(term + ": " + wikiData[term]); } // 簡化處理
 
         function init() {
             for (let name in ministersData) {
-                const group = ministersData[name];
-                const grid = document.getElementById('min-' + group);
-                const div = document.createElement('div');
-                div.className = 'character minister';
-                div.id = `char-${name}`;
-                div.innerHTML = `<div class="badge-circle">${name}</div>`;
+                const group = ministersData[name], grid = document.getElementById('min-' + group), div = document.createElement('div');
+                div.className = 'character minister'; div.id = `char-${name}`; div.innerHTML = `<div class="badge-circle">${name}</div>`;
                 grid.appendChild(div);
             }
             document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
             document.getElementById('btn-next').addEventListener('click', nextDialogue);
             document.getElementById('btn-prev').addEventListener('click', (e) => { e.stopPropagation(); prevDialogue(); });
             window.addEventListener('keydown', (e) => { if (e.code === "Space") { e.preventDefault(); nextDialogue(); } else if (e.code === "ArrowLeft" || e.code === "Backspace") { prevDialogue(); } });
+            showIntroTexts();
         }
         window.onload = init;
     </script>
