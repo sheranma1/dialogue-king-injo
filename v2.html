@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 終極功能復位版</title>
+    <title>朝廷爭議 V2 - 逆轉裁判復刻版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -22,7 +22,7 @@
         .audio-controls { position: fixed; top: 15px; right: 20px; z-index: 100001; background: rgba(0,0,0,0.8); border: 2px solid var(--royal-gold); padding: 10px 20px; border-radius: 30px; display: none; align-items: center; gap: 15px; }
         #volume-slider { width: 80px; accent-color: var(--royal-gold); cursor: pointer; }
 
-        /* 序幕與宮門 (優化絲滑度) */
+        /* 序幕與宮門 */
         #intro-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         .door { position: absolute; top: 0; width: 50.5vw; height: 100vh; background: #000; transition: transform 2.2s cubic-bezier(0.645, 0.045, 0.355, 1); z-index: 1; }
         .door-left { left: 0; border-right: 3px solid var(--royal-gold); }
@@ -47,7 +47,6 @@
 
         .court-layout { flex: 1; display: flex; flex-direction: column; padding: 10px 40px; gap: 15px; justify-content: space-between; }
         
-        /* 徽章樣式 */
         .badge-circle { 
             width: 85px; height: 85px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
             background: var(--minister-gray); color: #fff; font-size: 1.6rem; font-weight: 900;
@@ -60,8 +59,6 @@
         #char-仁祖.active .badge-circle { transform: scale(1.5); box-shadow: 0 0 60px var(--royal-red); animation: royal-bounce 2s infinite ease-in-out; }
         @keyframes speaker-bounce { 0%, 100% { transform: scale(1.4) translateY(0); } 50% { transform: scale(1.45) translateY(-5px); } }
         @keyframes royal-bounce { 0%, 100% { transform: scale(1.5) translateY(0); } 50% { transform: scale(1.55) translateY(-8px); } }
-        .character.angry .badge-circle { animation: pulse-red 0.5s infinite; background: var(--angry-red) !important; }
-        @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 15px var(--angry-red); } 50% { box-shadow: 0 0 45px var(--angry-red); } }
 
         /* 分Part排版 */
         .royal-row { display: flex; justify-content: center; align-items: center; gap: 50px; height: 150px; }
@@ -78,16 +75,46 @@
         .controls { display: flex; gap: 20px; width: 100%; max-width: 950px; justify-content: flex-end; }
         .btn-control { background: #333; color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); }
 
-        /* 不可！ 特效 */
+        /* 逆轉裁判「不可！」究極特效 */
         #objection-bubble {
-            position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            background: #c0392b; color: #fff; padding: 40px 100px; border: 15px solid #fff;
-            font-size: 8rem; font-weight: 900; z-index: 200000; border-radius: 20px;
-            box-shadow: 0 0 0 20px #c0392b, 0 50px 100px rgba(0,0,0,0.5);
-            pointer-events: none; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-family: 'Noto Serif TC', serif;
+            position: fixed; top: 40%; left: 50%; 
+            width: 600px; height: 350px;
+            transform: translate(-50%, -50%) scale(0);
+            background: #c0392b; 
+            color: #fff;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 9rem; font-weight: 900; z-index: 200000;
+            pointer-events: none;
+            /* 鋸齒狀對話框 */
+            clip-path: polygon(
+                0% 15%, 10% 10%, 20% 15%, 30% 5%, 40% 15%, 50% 0%, 
+                60% 15%, 70% 5%, 80% 15%, 90% 10%, 100% 15%, 
+                95% 30%, 100% 50%, 95% 70%, 100% 85%, 
+                90% 90%, 80% 85%, 70% 95%, 60% 85%, 50% 100%, 
+                40% 85%, 30% 95%, 20% 85%, 10% 90%, 0% 85%, 
+                5% 70%, 0% 50%, 5% 30%
+            );
+            border: 15px solid #fff;
+            box-shadow: 0 0 0 10px #c0392b;
+            text-shadow: 8px 8px 0px rgba(0,0,0,0.5);
         }
-        #objection-bubble.show { transform: translate(-50%, -50%) scale(1.2) rotate(-5deg); }
+        #objection-bubble.show { animation: objection-impact 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes objection-impact {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(20deg); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(1.6) rotate(-10deg); opacity: 1; }
+            45% { transform: translate(-50%, -50%) scale(1.4) rotate(5deg); }
+            100% { transform: translate(-50%, -50%) scale(1.5) rotate(-5deg); opacity: 1; }
+        }
+
+        /* 放射狀速度線 */
+        .action-lines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.3) 100%);
+            background-image: repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.4) 1deg 2deg);
+            z-index: 199999; opacity: 0; pointer-events: none;
+        }
+        .action-lines.active { animation: action-flash 0.8s steps(2); }
+        @keyframes action-flash { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 1; } }
 
         .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0; transition: 0.2s; pointer-events: none; }
         .speed-lines.active { opacity: 1; background: repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.08) 1deg 2deg); }
@@ -109,6 +136,7 @@
     <audio id="sfx-objection"><source src="https://assets.mixkit.co/sfx/preview/mixkit-epic-impact-613.mp3" type="audio/mpeg"></audio>
     <audio id="sfx-type" loop><source src="https://assets.mixkit.co/sfx/preview/mixkit-keyboard-typing-616.mp3" type="audio/mpeg"></audio>
 
+    <div class="action-lines" id="action-lines"></div>
     <div id="objection-bubble">不可！</div>
 
     <div class="audio-controls" id="audio-ui">
@@ -167,8 +195,6 @@
 
     <script>
         const wikiData = { "仁祖": "朝鮮第16代君主...", "元孫": "昭顯世子長子...", "世孫": "即元孫...", "鳳林": "仁祖次子...", "金瑬": "領議政...", "金自點": "權臣...", "洪瑞鳳": "左議政...", "德宗": "世祖長子..." };
-        
-        // 完整的 51 段對話數據復位
         const dialogue = [
             { speaker: "上", text: "予有宿疾，往往而劇，元孫如彼其微弱. 予觀今日之形勢，不可以待小兒之成長. 未知卿等之意以爲何如？", special: "shake", stance: 5 },
             { speaker: "瑬", text: "朝野方頌岡陵之祝，而殿下遽出此言，臣等罔知所達。", stance: -2 },
@@ -250,8 +276,12 @@
 
             if (entry.special === "objection") { 
                 document.getElementById('sfx-objection').play(); 
+                document.getElementById('action-lines').classList.add('active');
                 document.getElementById('objection-bubble').classList.add('show');
-                setTimeout(() => document.getElementById('objection-bubble').classList.remove('show'), 800);
+                setTimeout(() => {
+                    document.getElementById('objection-bubble').classList.remove('show');
+                    document.getElementById('action-lines').classList.remove('active');
+                }, 800);
                 triggerSpecial("shake"); triggerSpecial("flash");
             }
             if (entry.special === "shake" || entry.stance >= 12) { document.getElementById('sfx-slam').play(); triggerSpecial("shake"); }
