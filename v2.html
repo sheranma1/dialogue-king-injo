@@ -25,20 +25,20 @@
 
         /* 序幕與宮門 */
         #intro-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .door { position: absolute; top: 0; width: 50.5vw; height: 100vh; background: #000; transition: transform 2.2s cubic-bezier(0.645, 0.045, 0.355, 1); z-index: 1; }
+        .door { position: absolute; top: 0; width: 50.5vw; height: 100vh; background: #000; transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1; }
         .door-left { left: 0; border-right: 3px solid var(--royal-gold); }
         .door-right { right: 0; border-left: 3px solid var(--royal-gold); }
         #intro-overlay.open .door-left { transform: translateX(-100%); }
         #intro-overlay.open .door-right { transform: translateX(100%); }
         #intro-content { position: relative; z-index: 2; text-align: center; color: #fff; max-width: 900px; }
-        .intro-text { font-size: 2.1rem; font-weight: 700; line-height: 2.3; margin-bottom: 25px; opacity: 0; transform: translateY(20px); transition: 1.5s; }
+        .intro-text { font-size: 2.1rem; font-weight: 700; line-height: 2.3; margin-bottom: 25px; opacity: 0; transform: translateY(20px); transition: 1s ease-out; }
         .intro-text.visible { opacity: 1; transform: translateY(0); }
-        #start-btn { margin-top: 50px; padding: 20px 80px; font-size: 1.6rem; color: var(--royal-gold); border: 2px solid var(--royal-gold); background: transparent; cursor: pointer; opacity: 0; transition: 0.8s; letter-spacing: 10px; }
+        #start-btn { margin-top: 50px; padding: 20px 80px; font-size: 1.6rem; color: var(--royal-gold); border: 2px solid var(--royal-gold); background: transparent; cursor: pointer; opacity: 0; transition: 0.6s ease-out; letter-spacing: 10px; }
         #start-btn.visible { opacity: 1; }
 
         /* 主界面 */
-        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; transform: scale(1.1); filter: blur(5px); transition: 2.5s; opacity: 0; }
-        #app.visible { transform: scale(1); filter: blur(0); opacity: 1; }
+        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; transform: scale(1.05); opacity: 0; transition: opacity 1.2s ease-out, transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        #app.visible { transform: scale(1); opacity: 1; }
         
         /* 強化血條設計 */
         .status-bar { height: 75px; background: rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 2px solid #ddd; z-index: 1000; gap: 8px; }
@@ -48,7 +48,7 @@
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 15px rgba(0,0,0,0.1); border: 2px solid #444;
             position: relative;
         }
-        .stance { transition: width 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .stance { transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); position: relative; }
         .traditionalists { background: linear-gradient(90deg, #1a5276, var(--blue-army)); box-shadow: 0 0 20px rgba(41,128,185,0.4); }
         .reformists { background: linear-gradient(90deg, var(--royal-red), #e74c3c); box-shadow: 0 0 20px rgba(192,57,43,0.4); }
         .bar-center-line { position: absolute; left: 50%; top: -5px; width: 4px; height: 28px; background: var(--royal-gold); z-index: 10; box-shadow: 0 0 10px var(--royal-gold); }
@@ -63,10 +63,10 @@
         .royal .badge-circle { width: 110px; height: 110px; background: var(--royal-red); border-color: var(--royal-gold); font-size: 2rem; }
         
         /* 發言高亮 */
-        .character.active .badge-circle { transform: scale(1.4); box-shadow: 0 0 40px var(--royal-gold); border-color: var(--royal-gold); z-index: 100; animation: speaker-bounce 2s infinite ease-in-out; }
-        #char-仁祖.active .badge-circle { transform: scale(1.5); box-shadow: 0 0 60px var(--royal-red); animation: royal-bounce 2s infinite ease-in-out; }
-        @keyframes speaker-bounce { 0%, 100% { transform: scale(1.4) translateY(0); } 50% { transform: scale(1.45) translateY(-5px); } }
-        @keyframes royal-bounce { 0%, 100% { transform: scale(1.5) translateY(0); } 50% { transform: scale(1.55) translateY(-8px); } }
+        .character.active .badge-circle { transform: scale(1.4); box-shadow: 0 0 40px var(--royal-gold); border-color: var(--royal-gold); z-index: 100; animation: speaker-bounce 1.6s infinite ease-in-out; }
+        #char-仁祖.active .badge-circle { transform: scale(1.5); box-shadow: 0 0 60px var(--royal-red); animation: royal-bounce 1.6s infinite ease-in-out; }
+        @keyframes speaker-bounce { 0%, 100% { transform: scale(1.4) translateY(0); } 50% { transform: scale(1.42) translateY(-3px); } }
+        @keyframes royal-bounce { 0%, 100% { transform: scale(1.5) translateY(0); } 50% { transform: scale(1.52) translateY(-4px); } }
 
         /* 分Part排版 */
         .royal-row { display: flex; justify-content: center; align-items: center; gap: 50px; height: 150px; }
@@ -76,7 +76,7 @@
         .group-label { font-weight: 900; color: #888; font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
 
         /* 文本框 */
-        .dialogue-center { width: 100%; height: 280px; display: flex; flex-direction: column; align-items: center; padding: 0 20px 20px 20px; gap: 15px; margin-top: -15px; }
+        .dialogue-center { width: 100%; height: 340px; display: flex; flex-direction: column; align-items: center; padding: 0 20px 30px 20px; gap: 15px; margin-top: 0; }
         .dialogue-box { width: 100%; max-width: 950px; background: #fff; border-radius: 15px; padding: 30px 60px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border: 5px solid #333; cursor: pointer; text-align: left; position: relative; }
         .speaker-box { position: absolute; top: -25px; left: 40px; background: #333; color: #fff; padding: 8px 35px; border-radius: 5px; font-weight: 900; font-size: 1.4rem; box-shadow: 6px 6px 0px var(--gold); }
         .speech-text { font-size: 2rem; line-height: 1.6; color: #000; font-weight: 700; min-height: 2.2em; }
@@ -94,9 +94,9 @@
         #objection-bubble.show { animation: objection-impact 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes objection-impact { 0% { transform: translate(-50%, -50%) scale(0) rotate(20deg); opacity: 1; } 30% { transform: translate(-50%, -50%) scale(1.6) rotate(-10deg); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.5) rotate(-5deg); opacity: 1; } }
 
-        .action-lines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.4) 1deg 2deg); z-index: 199999; opacity: 0; pointer-events: none; }
-        .action-lines.active { animation: action-flash 0.8s steps(2); }
-        @keyframes action-flash { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 1; } }
+        .action-lines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 199999; opacity: 0; pointer-events: none; }
+        .action-lines.active { animation: action-flash 0.6s ease-out forwards; }
+        @keyframes action-flash { 0% { opacity: 0.8; } 100% { opacity: 0; } }
         
         #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
         .flash-active { animation: flash-anim 0.3s forwards; }
@@ -111,11 +111,12 @@
     </style>
 </head>
 <body>
-    <audio id="bgm" loop><source src="https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73456.mp3" type="audio/mpeg"></audio>
-    <audio id="sfx-slam"><source src="https://assets.mixkit.co/sfx/preview/mixkit-table-slam-sound-2507.mp3" type="audio/mpeg"></audio>
-    <audio id="sfx-sting"><source src="https://assets.mixkit.co/sfx/preview/mixkit-suspense-mystery-bass-hit-600.mp3" type="audio/mpeg"></audio>
-    <audio id="sfx-objection"><source src="https://assets.mixkit.co/sfx/preview/mixkit-epic-impact-613.mp3" type="audio/mpeg"></audio>
-    <audio id="sfx-type" loop><source src="https://assets.mixkit.co/sfx/preview/mixkit-keyboard-typing-616.mp3" type="audio/mpeg"></audio>
+    <!-- 音樂將由JavaScript生成 -->
+    <audio id="bgm" loop></audio>
+    <audio id="sfx-slam"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav"></audio>
+    <audio id="sfx-sting"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav"></audio>
+    <audio id="sfx-objection"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav"></audio>
+    <audio id="sfx-type" loop><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav"></audio>
 
     <div class="action-lines" id="action-lines"></div>
     <div id="objection-bubble">不可！</div>
@@ -245,7 +246,7 @@
 
         function openPalaceGates() {
             document.getElementById('intro-overlay').classList.add('open');
-            document.getElementById('bgm').play();
+            playGeneratedBGM();
             document.getElementById('audio-ui').style.display = 'flex';
             setTimeout(() => document.getElementById('app').classList.add('visible'), 500);
             setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 3500);
@@ -298,6 +299,60 @@
         function formatText(text) { let res = text; Object.keys(wikiData).forEach(k => { res = res.replace(new RegExp(k, 'g'), `<span class="term" onclick="event.stopPropagation(); showWiki('${k}')">${k}</span>`); }); return res; }
         function showWiki(t) { document.getElementById('wiki-title').innerText = t; document.getElementById('wiki-content').innerText = wikiData[t] || "..."; document.getElementById('wiki-modal').style.display='block'; document.getElementById('wiki-overlay').style.display='block'; }
         function closeWiki() { document.getElementById('wiki-modal').style.display='none'; document.getElementById('wiki-overlay').style.display='none'; }
+
+        // 生成東亞宮廷風格背景音樂
+        function generateEastAsianBGM() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const duration = 30; // 30秒循環
+            const sampleRate = audioContext.sampleRate;
+            const buffer = audioContext.createBuffer(1, duration * sampleRate, sampleRate);
+            const channelData = buffer.getChannelData(0);
+
+            // 生成低沉的鐘聲效果（古代感）
+            const bellFreq = 55; // A1
+            const envelopeLength = sampleRate * 0.5;
+
+            for (let i = 0; i < buffer.length; i++) {
+                const t = i / sampleRate;
+                // 主旋律：低沉的五聲音階（東亞傳統）
+                const scale = [55, 61.74, 73.42, 82.41, 110]; // A1, B1, D2, E2, A2
+                const note = scale[Math.floor(t * 2) % 5];
+                const osc = Math.sin(2 * Math.PI * note * t) * Math.exp(-t * 0.3);
+
+                // 和弦背景
+                const harmony = Math.sin(2 * Math.PI * note * 1.5 * t) * 0.3 * Math.exp(-t * 0.25);
+
+                // 鐘聲泛音
+                const bell = Math.sin(2 * Math.PI * note * 2.5 * t) * 0.2 * Math.exp(-t * 0.4);
+
+                channelData[i] = (osc + harmony + bell) * 0.3;
+            }
+
+            // 播放合成的音樂
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.loop = true;
+            source.connect(audioContext.destination);
+
+            const gainNode = audioContext.createGain();
+            gainNode.gain.value = 0.3;
+            source.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            return source;
+        }
+
+        let bgmSource = null;
+        function playGeneratedBGM() {
+            try {
+                if (!bgmSource) {
+                    bgmSource = generateEastAsianBGM();
+                    bgmSource.start(0);
+                }
+            } catch(e) {
+                console.log('Web Audio API not available, audio disabled');
+            }
+        }
 
         function init() {
             Object.keys(ministersData).forEach(n => {
