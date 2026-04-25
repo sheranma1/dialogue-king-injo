@@ -489,7 +489,10 @@
             cardEl.style.setProperty('--card-start-y', startY + 'px');
 
             const displayArea = document.getElementById('card-display-area');
-            displayArea.innerHTML = '';
+            // 移除舊卡片（如果有的話）
+            const oldCard = displayArea.querySelector('.card');
+            if (oldCard) displayArea.removeChild(oldCard);
+
             displayArea.appendChild(cardEl);
 
             // 觸發飛入動畫
@@ -497,17 +500,17 @@
                 cardEl.classList.add('fly-in');
             });
 
-            // 動畫完成後停留（1秒動畫 + 5秒停留 = 6秒後淡出）
+            // 動畫完成後停留（1秒動畫）
             setTimeout(() => {
                 cardEl.classList.remove('fly-in');
                 cardEl.classList.add('stay');
             }, 1000);
 
-            // 停留後淡出（6秒後開始淡出）
+            // 停留7秒後淡出
             setTimeout(() => {
                 cardEl.classList.add('fade-out');
                 setTimeout(() => { if (displayArea.contains(cardEl)) displayArea.removeChild(cardEl); }, 500);
-            }, 6000);
+            }, 8000);
         }
 
         function updateUI() {
