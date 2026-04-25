@@ -151,17 +151,22 @@
         .king-sil { 
             background-image: url('characters_sheet.png'); 
             background-color: transparent !important; 
-            background-size: 900% 200%; /* 9列2行 */
-            background-position: 0% 0%; /* 1號仁祖位置 */
-            width: 140px; 
-            height: 200px; 
+            background-size: 900% 200%;
+            background-position: 0% 0%; 
+            width: 120px; 
+            height: 220px;
+            filter: contrast(1.1) brightness(1.1) drop-shadow(0 0 10px rgba(0,0,0,0.5));
+            transform-origin: bottom;
         }
         .min-sil { 
             background-image: url('characters_sheet.png'); 
             background-size: 900% 200%;
             background-position: var(--pos-x, 0%) var(--pos-y, 0%);
-            width: 100px; 
-            height: 140px; 
+            width: 90px; 
+            height: 160px;
+            /* 裁剪掉底部姓名區域 */
+            clip-path: inset(0 0 15% 0); 
+            filter: saturate(1.1) brightness(0.9);
         }
         .name-tag { margin-top: 5px; font-size: 11px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 2px 6px; }
 

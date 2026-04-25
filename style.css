@@ -189,16 +189,18 @@ body {
     background-color: transparent !important;
     background-size: 900% 200%;
     background-position: 0% 0%;
-    width: 140px;
-    height: 200px;
+    width: 120px;
+    height: 220px;
+    filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));
 }
 
 .min-sil {
     background-image: url('characters_sheet.png');
     background-size: 900% 200%;
     background-position: var(--pos-x, 0%) var(--pos-y, 0%);
-    width: 100px;
-    height: 140px;
+    width: 90px;
+    height: 160px;
+    clip-path: inset(0 0 15% 0);
 }
 
 .name-tag {
