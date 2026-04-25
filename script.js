@@ -17,7 +17,7 @@ const dialogue = [
     { speaker: "上", text: "月山大君則性質不慧云，而當時成宗之年，亦已過十歲耶？", mood: 80, stance: 5 },
     { speaker: "瑬", text: "成宗生於丁丑德宗升遐之歲，故逮戊子世祖升遐之日，年十二矣。", mood: 80, stance: -5 },
     { speaker: "上", text: "以序言之，則當立者月山，而事有隨時變通者，故不得不如此爾。", mood: 90, stance: 15 },
-    { speaker: "瑬", text: "當世祖之世，國家無事，而有此反常之擧，此蓋出於擇賢耶？", mood: 90, stance: -5 },
+    { speaker: "瑬", text: "當世祖之世，國家無事，而有此反常之擧，大聖人處事，誠未可量，此蓋出於擇賢耶？", mood: 90, stance: -5 },
     { speaker: "上", text: "世祖朝事，多危疑，故必欲立長君。予亦豈不知循序之爲至順也？第惟今日之勢，必須國有長君，然後可以保宗社之重也。", mood: 100, stance: 20 },
     { speaker: "德泂", text: "臣之意，亦以瑞鳳之言爲然也。", mood: 100, stance: -5 },
     { speaker: "仁垕", text: "殿下之意，爲宗社之大計，惟在聖斷耳。", mood: 95, stance: 15 },
@@ -31,15 +31,14 @@ const dialogue = [
     { speaker: "太和", text: "臣之意與堉同矣。", mood: 100, stance: -5 },
     { speaker: "上", text: "兩司長官，亦各言其意。", mood: 100, stance: 0 },
     { speaker: "楘", text: "三代以後，承統有序，若遽行權道，則必有大患矣。", mood: 100, stance: -20 },
-    // --- 新增對話 ---
     { speaker: "爾徵", text: "宗社之計，須與大臣議定，必欲問臣，但有守經而已。", mood: 100, stance: -15 },
     { speaker: "上", text: "此事務須大臣決之。卿等但為此常談，一朝予若不諱，卿等何以為計耶？", mood: 100, stance: 5 },
-    { speaker: "自點", text: "此舉出於聖上之深思遠慮，宜速斷定，何必持難耶？", mood: 90, stance: 20 },
+    { speaker: "自點", text: "此舉出於聖上之深思慮，宜速斷定，何必持難耶？", mood: 90, stance: 20 },
     { speaker: "上", text: "此言是也。", mood: 80, stance: 10 },
     { speaker: "瑬", text: "群臣之言，似與臣意相反矣。", mood: 95, stance: -10 },
     { speaker: "上", text: "然則卿之見，果以為何如耶？", mood: 95, stance: 5 },
-    { speaker: "瑬", text: "癸亥反正之舉、南漢出城之事，豈非非常舉措？今也臣民之望，非不已屬於元孫。若上意已定，則臣何敢可否於其間哉？", mood: 90, stance: -5 },
-    { speaker: "上", text: "卿之意，與予合矣。大君雖有二人，皆無可取，而成長之人，異於幼沖，故有此計也。", mood: 85, stance: 15 },
+    { speaker: "瑬", text: "癸亥反正之舉、南漢出城之事，豈非非常舉措？若上意已定，則臣何敢可否於其間哉？", mood: 90, stance: -5 },
+    { speaker: "上", text: "卿之意，與予合矣。大君雖有二人，皆無可取，故以此計也。", mood: 85, stance: 15 },
     { speaker: "瑬", text: "讓寧大君多失德、敗度之事，故朝臣有廢立之請。今則元孫幼沖，失德未彰，所以人心之驚惑也。", mood: 95, stance: -10 },
     { speaker: "上", text: "元孫之師傅，皆在坐中，豈不明知其賢不肖耶？", mood: 100, stance: 5 },
     { speaker: "堉", text: "元孫幼沖，別無失德矣。", mood: 100, stance: -10 },
@@ -48,14 +47,14 @@ const dialogue = [
     { speaker: "上", text: "元孫性質不明，決非負荷之才也。", mood: 100, stance: 20 },
     { speaker: "植", text: "進講之時，可見其英發矣。", mood: 100, stance: -10 },
     { speaker: "景奭", text: "臣亦進參講書之列，而幼少之年，豈可預卜將來之成就耶？", mood: 100, stance: -5 },
-    { speaker: "上", text: "（調自點）洛興未畢前說，盍終言之？", mood: 95, stance: 5 },
+    { speaker: "上", text: "洛興未畢前說，盍終言之？", mood: 95, stance: 5 },
     { speaker: "自點", text: "聖上之為宗社深謀遠慮，豈無所見哉？", mood: 90, stance: 15 },
     { speaker: "上", text: "然則卿之意，不以為不可也。", mood: 85, stance: 10 },
-    { speaker: "瑬", text: "聖上之為此舉者，公天下之心也。寧有私意於其間哉？", mood: 90, stance: -5 },
+    { speaker: "瑬", text: "聖上之為此舉者，公天下之心也。", mood: 90, stance: -5 },
     { speaker: "瑞鳳", text: "臣之所達，經常之道也。若夫處權，在聖上。", mood: 95, stance: -10 },
-    { speaker: "上", text: "大臣之議，每以經常二字為執言之地，含糊傳會。當此大事，欲從即從，不從則終始不從，棄職而去宜矣！", mood: 100, stance: 20 },
+    { speaker: "上", text: "大臣之議，每以經常二字為執言之地。棄職而去宜矣！", mood: 100, stance: 20 },
     { speaker: "上", text: "士君子行己處心，豈可如是黠鼠耶？", mood: 100, stance: 10 },
-    { speaker: "宮廷史官", text: "時上怒甚，左右皆不敢言。", mood: 100, stance: 0 }
+    { speaker: "史官", text: "時上怒甚，左右皆不敢言。", mood: 100, stance: 0 }
 ];
 
 const ministersData = {
@@ -73,7 +72,7 @@ const ministersData = {
     "堉": { img: 'pixel_minister_old.png', filter: 'brightness(1.4)' },
     "太和": { img: 'pixel_minister.png', filter: 'hue-rotate(60deg)' },
     "楘": { img: 'pixel_minister_old.png', filter: 'invert(0.1) hue-rotate(210deg)' },
-    "爾徵": { img: 'pixel_minister_old.png', filter: 'hue-rotate(150deg) contrast(1.2)' }
+    "爾徵": { img: 'pixel_minister_old.png', filter: 'hue-rotate(150deg)' }
 };
 
 const ministersList = Object.keys(ministersData);
@@ -81,11 +80,16 @@ let currentIndex = -1;
 let currentStanceBalance = 50; 
 
 function init() {
+    console.log("初始化廷議系統...");
     const leftWing = document.getElementById('min-left');
     const rightWing = document.getElementById('min-right');
-    if(!leftWing || !rightWing) return;
+    const box = document.getElementById('dialogue-box');
 
-    // 清空現有大臣，防止重複加載
+    if (!leftWing || !rightWing || !box) {
+        console.error("找不到關鍵 DOM 元素！");
+        return;
+    }
+
     leftWing.innerHTML = '';
     rightWing.innerHTML = '';
 
@@ -96,30 +100,33 @@ function init() {
         div.id = `char-${name}`;
         div.style.setProperty('--bg-img', `url('${data.img}')`);
         div.style.setProperty('--char-filter', data.filter);
-        div.innerHTML = `
-            <div class="silhouette min-sil"></div>
-            <div class="name-tag">${name}</div>
-        `;
+        div.innerHTML = `<div class="silhouette min-sil"></div><div class="name-tag">${name}</div>`;
         
         if (index % 2 === 0) leftWing.appendChild(div);
         else rightWing.appendChild(div);
+        
+        setTimeout(() => div.classList.add('loaded'), 50);
     });
 
-    // 重新綁定事件
-    const box = document.getElementById('dialogue-box');
-    box.replaceWith(box.cloneNode(true));
-    document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
+    box.onclick = nextDialogue;
+    console.log("事件監聽器已綁定。");
 }
 
 function nextDialogue() {
     currentIndex++;
-    if (currentIndex >= dialogue.length) return;
+    console.log("當前對話索引:", currentIndex);
+
+    if (currentIndex >= dialogue.length) {
+        console.log("對話結束");
+        return;
+    }
 
     const entry = dialogue[currentIndex];
     document.getElementById('speaker').innerText = entry.speaker;
     document.getElementById('speech').innerText = entry.text;
 
     document.querySelectorAll('.character').forEach(c => c.classList.remove('active'));
+    
     if (entry.speaker === "上") {
         document.getElementById('char-king').classList.add('active');
     } else {
@@ -129,8 +136,7 @@ function nextDialogue() {
 
     const moodFill = document.getElementById('mood-fill');
     if(moodFill) moodFill.style.width = entry.mood + '%';
-    document.getElementById('king-mood-label').innerText = entry.mood >= 95 ? "王之意：震怒" : (entry.mood >= 80 ? "王之意：慍怒" : "王之意：尋思");
-
+    
     currentStanceBalance += entry.stance;
     currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
     
@@ -140,9 +146,8 @@ function nextDialogue() {
     if(barReform) barReform.style.width = currentStanceBalance + '%';
 
     if (entry.mood >= 95) {
-        const app = document.getElementById('app');
-        app.classList.add('shake');
-        setTimeout(() => app.classList.remove('shake'), 400);
+        document.getElementById('app').classList.add('shake');
+        setTimeout(() => document.getElementById('app').classList.remove('shake'), 400);
     }
 }
 
