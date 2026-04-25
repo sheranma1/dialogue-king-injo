@@ -148,7 +148,14 @@
             z-index: 100;
         }
         .silhouette { background-size: contain; background-repeat: no-repeat; background-position: bottom; image-rendering: pixelated; }
-        .king-sil { background-image: url('king_final_v2.png'); background-color: transparent !important; width: 220px; height: 220px; }
+        .king-sil { 
+            background-image: url('injo_real.png'); 
+            background-color: transparent !important; 
+            background-size: 320% auto; /* 放大以裁剪出特定人物 */
+            background-position: 4% 5%; /* 定位到左側的全身像 */
+            width: 240px; 
+            height: 320px; 
+        }
         .min-sil { background-image: var(--bg-img); filter: var(--char-filter); width: 80px; height: 80px; }
         .name-tag { margin-top: 5px; font-size: 11px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 2px 6px; }
 
