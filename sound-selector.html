@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遊戲音效選擇器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1a1a1a;
+            color: #f4f1ea;
+            font-family: 'Noto Serif TC', serif;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2rem;
+            color: #f1c40f;
+            letter-spacing: 4px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .category {
+            margin-bottom: 50px;
+        }
+        .category h2 {
+            font-size: 1.5rem;
+            color: #f1c40f;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1c40f;
+            letter-spacing: 3px;
+        }
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .sound-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .sound-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #f1c40f;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+        }
+        .sound-title {
+            font-size: 1.1rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        .sound-desc {
+            font-size: 0.9rem;
+            color: #bbb;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .sound-source {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        button {
+            flex: 1;
+            padding: 10px 15px;
+            background: #f1c40f;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 5px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        button:hover {
+            background: #ffd700;
+            transform: scale(1.05);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        .select-btn {
+            background: #2ecc71;
+            color: #fff;
+            flex: 2;
+        }
+        .select-btn:hover {
+            background: #27ae60;
+        }
+        .selected {
+            background: #27ae60 !important;
+            border-color: #2ecc71 !important;
+        }
+        .selected .sound-title::after {
+            content: " ✓";
+            color: #2ecc71;
+        }
+        .note {
+            background: rgba(241, 196, 15, 0.1);
+            border-left: 3px solid #f1c40f;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>遊戲音效選擇器</h1>
+    <div class="container">
+        <!-- 反對音效 -->
+        <div class="category">
+            <h2>反對/異議 (Objection)</h2>
+            <div class="sound-grid">
+                <div class="sound-card" id="objection-1">
+                    <div class="sound-title">逆轉裁判原版</div>
+                    <div class="sound-desc">經典的"異議！"音效，尖銳有力</div>
+                    <div class="sound-source">來源：逆轉裁判遊戲</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://www.myinstants.com/media/sounds/objection.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('objection', 1)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="objection-2">
+                    <div class="sound-title">深沉異議</div>
+                    <div class="sound-desc">更深沉有力的駁斥音效，帶有回音</div>
+                    <div class="sound-source">來源：自製合成</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2808/2808-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('objection', 2)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="objection-3">
+                    <div class="sound-title">冷靜否定</div>
+                    <div class="sound-desc">低調但有力的反對，更符合古代廷議</div>
+                    <div class="sound-source">來源：遊戲庫</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2809/2809-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('objection', 3)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="objection-4">
+                    <div class="sound-title">打擊聲</div>
+                    <div class="sound-desc">類似拍桌子的聲音，象徵激烈反對</div>
+                    <div class="sound-source">來源：音效庫</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2806/2806-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('objection', 4)">選擇</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 同意音效 -->
+        <div class="category">
+            <h2>同意/認可 (Approval)</h2>
+            <div class="sound-grid">
+                <div class="sound-card" id="approval-1">
+                    <div class="sound-title">清爽確認</div>
+                    <div class="sound-desc">輕快的叮聲，象徵同意和確認</div>
+                    <div class="sound-source">來源：UI音效庫</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2848/2848-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('approval', 1)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="approval-2">
+                    <div class="sound-title">鈴聲</div>
+                    <div class="sound-desc">古代鈴聲，象徵官方宣佈同意</div>
+                    <div class="sound-source">來源：傳統樂器</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2849/2849-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('approval', 2)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="approval-3">
+                    <div class="sound-title">和諧上升</div>
+                    <div class="sound-desc">溫和上升的音調，表示贊同</div>
+                    <div class="sound-source">來源：遊戲庫</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2858/2858-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('approval', 3)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="approval-4">
+                    <div class="sound-title">莊重點頭</div>
+                    <div class="sound-desc">更莊重的確認聲，適合古代背景</div>
+                    <div class="sound-source">來源：自製合成</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2859/2859-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('approval', 4)">選擇</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 回合轉換音效 -->
+        <div class="category">
+            <h2>回合轉換 (Turn Transition)</h2>
+            <div class="sound-grid">
+                <div class="sound-card" id="turn-1">
+                    <div class="sound-title">輕快翻頁</div>
+                    <div class="sound-desc">像翻書頁一樣的聲音，輕盈流暢</div>
+                    <div class="sound-source">來源：紙張音效</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2873/2873-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('turn', 1)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="turn-2">
+                    <div class="sound-title">鼓聲轉換</div>
+                    <div class="sound-desc">古代鼓聲，象徵新的發言者出現</div>
+                    <div class="sound-source">來源：傳統樂器</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2874/2874-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('turn', 2)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="turn-3">
+                    <div class="sound-title">簡潔叮聲</div>
+                    <div class="sound-desc">乾淨簡潔，不會干擾對話閱讀</div>
+                    <div class="sound-source">來源：UI音效庫</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2875/2875-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('turn', 3)">選擇</button>
+                    </div>
+                </div>
+
+                <div class="sound-card" id="turn-4">
+                    <div class="sound-title">琴弦過度</div>
+                    <div class="sound-desc">優雅的琴弦聲，增加文化氛圍</div>
+                    <div class="sound-source">來源：東亞樂器</div>
+                    <div class="controls">
+                        <button onclick="playSound('https://assets.mixkit.co/active_storage/sfx/2876/2876-preview.mp3')">試聽</button>
+                        <button class="select-btn" onclick="selectSound('turn', 4)">選擇</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>💡 提示：</strong> 試聽每個音效，找到最適合遊戲氛圍的組合。選擇後會在下方顯示你的選擇。選完後告訴我你選了哪些，我會幫你整合到v2.html裡。
+        </div>
+
+        <div id="selections" style="margin-top: 30px; padding: 20px; background: rgba(46, 204, 113, 0.1); border-left: 3px solid #2ecc71; border-radius: 5px; display: none;">
+            <h3 style="color: #2ecc71; margin-bottom: 10px;">你的選擇：</h3>
+            <p id="selection-text"></p>
+        </div>
+    </div>
+
+    <script>
+        const selected = {
+            objection: null,
+            approval: null,
+            turn: null
+        };
+
+        function playSound(url) {
+            const audio = new Audio(url);
+            audio.volume = 0.7;
+            audio.play().catch(e => {
+                console.log('音效播放失敗:', e);
+                alert('無法播放此音效，可能是網絡問題。');
+            });
+        }
+
+        function selectSound(type, num) {
+            // 移除之前的選擇高亮
+            document.querySelectorAll(`#${type}-${selected[type]}`).forEach(el => {
+                if (el) el.classList.remove('selected');
+            });
+
+            // 設置新選擇
+            selected[type] = num;
+            const card = document.getElementById(`${type}-${num}`);
+            card.classList.add('selected');
+
+            // 顯示選擇摘要
+            updateSelectionDisplay();
+        }
+
+        function updateSelectionDisplay() {
+            const obj = selected.objection ? `反對音效 #${selected.objection}` : '未選擇';
+            const app = selected.approval ? `同意音效 #${selected.approval}` : '未選擇';
+            const tur = selected.turn ? `回合音效 #${selected.turn}` : '未選擇';
+
+            const text = `異議: ${obj} | 同意: ${app} | 轉換: ${tur}`;
+            document.getElementById('selection-text').textContent = text;
+
+            if (selected.objection || selected.approval || selected.turn) {
+                document.getElementById('selections').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
