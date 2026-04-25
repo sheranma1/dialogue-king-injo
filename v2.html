@@ -111,8 +111,8 @@
     </style>
 </head>
 <body>
-    <!-- 音樂將由JavaScript生成 -->
-    <audio id="bgm" loop></audio>
+    <!-- 古樂背景音樂 -->
+    <audio id="bgm" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg"></audio>
     <audio id="sfx-slam"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav"></audio>
     <audio id="sfx-sting"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav"></audio>
     <audio id="sfx-objection"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav"></audio>
@@ -246,7 +246,7 @@
 
         function openPalaceGates() {
             document.getElementById('intro-overlay').classList.add('open');
-            playGeneratedBGM();
+            document.getElementById('bgm').play();
             document.getElementById('audio-ui').style.display = 'flex';
             setTimeout(() => document.getElementById('app').classList.add('visible'), 500);
             setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 3500);
@@ -300,59 +300,6 @@
         function showWiki(t) { document.getElementById('wiki-title').innerText = t; document.getElementById('wiki-content').innerText = wikiData[t] || "..."; document.getElementById('wiki-modal').style.display='block'; document.getElementById('wiki-overlay').style.display='block'; }
         function closeWiki() { document.getElementById('wiki-modal').style.display='none'; document.getElementById('wiki-overlay').style.display='none'; }
 
-        // 生成東亞宮廷風格背景音樂
-        function generateEastAsianBGM() {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const duration = 30; // 30秒循環
-            const sampleRate = audioContext.sampleRate;
-            const buffer = audioContext.createBuffer(1, duration * sampleRate, sampleRate);
-            const channelData = buffer.getChannelData(0);
-
-            // 生成低沉的鐘聲效果（古代感）
-            const bellFreq = 55; // A1
-            const envelopeLength = sampleRate * 0.5;
-
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                // 主旋律：低沉的五聲音階（東亞傳統）
-                const scale = [55, 61.74, 73.42, 82.41, 110]; // A1, B1, D2, E2, A2
-                const note = scale[Math.floor(t * 2) % 5];
-                const osc = Math.sin(2 * Math.PI * note * t) * Math.exp(-t * 0.3);
-
-                // 和弦背景
-                const harmony = Math.sin(2 * Math.PI * note * 1.5 * t) * 0.3 * Math.exp(-t * 0.25);
-
-                // 鐘聲泛音
-                const bell = Math.sin(2 * Math.PI * note * 2.5 * t) * 0.2 * Math.exp(-t * 0.4);
-
-                channelData[i] = (osc + harmony + bell) * 0.3;
-            }
-
-            // 播放合成的音樂
-            const source = audioContext.createBufferSource();
-            source.buffer = buffer;
-            source.loop = true;
-            source.connect(audioContext.destination);
-
-            const gainNode = audioContext.createGain();
-            gainNode.gain.value = 0.3;
-            source.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            return source;
-        }
-
-        let bgmSource = null;
-        function playGeneratedBGM() {
-            try {
-                if (!bgmSource) {
-                    bgmSource = generateEastAsianBGM();
-                    bgmSource.start(0);
-                }
-            } catch(e) {
-                console.log('Web Audio API not available, audio disabled');
-            }
-        }
 
         function init() {
             Object.keys(ministersData).forEach(n => {
