@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 宮門開啟版</title>
+    <title>朝廷爭議 V2 - 聲影沉浸版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,7 +18,17 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--paper-white); color: var(--ink-black); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
         
-        /* 宮門與開場層 */
+        /* 音頻控制按鈕 */
+        #audio-toggle {
+            position: fixed; top: 15px; right: 20px; z-index: 100001;
+            background: rgba(0,0,0,0.5); border: 1px solid var(--royal-gold);
+            color: var(--royal-gold); padding: 5px 12px; border-radius: 20px;
+            cursor: pointer; font-size: 0.8rem; font-weight: 900;
+            display: none; transition: all 0.3s;
+        }
+        #audio-toggle:hover { background: var(--royal-gold); color: #000; }
+
+        /* 序幕與宮門 */
         #intro-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 100000; overflow: hidden;
@@ -33,41 +43,26 @@
         }
         .door-left { left: 0; border-right: 2px solid var(--royal-gold); }
         .door-right { right: 0; border-left: 2px solid var(--royal-gold); }
-        
         #intro-overlay.open .door-left { transform: translateX(-100%); }
         #intro-overlay.open .door-right { transform: translateX(100%); }
         #intro-overlay.open { pointer-events: none; }
 
         #intro-content { position: relative; z-index: 2; text-align: center; color: #fff; max-width: 850px; transition: opacity 1s; }
         #intro-overlay.open #intro-content { opacity: 0; }
-        
         .intro-text { font-size: 2.2rem; font-weight: 700; line-height: 2.2; margin-bottom: 25px; opacity: 0; transform: translateY(30px); transition: all 1.2s; }
         .intro-text.visible { opacity: 1; transform: translateY(0); }
-        
         #start-btn { 
             margin-top: 60px; padding: 18px 80px; font-size: 1.6rem; font-weight: 900;
             background: transparent; color: var(--royal-gold); border: 2px solid var(--royal-gold);
             cursor: pointer; opacity: 0; transition: all 0.6s; letter-spacing: 8px;
-            box-shadow: inset 0 0 0 0 var(--royal-gold);
         }
         #start-btn:hover { background: var(--royal-gold); color: #000; box-shadow: 0 0 40px var(--royal-gold); }
         #start-btn.visible { opacity: 1; }
 
         /* 主界面層 */
-        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; transform: scale(1.1); filter: blur(5px); transition: all 2.5s cubic-bezier(0.7, 0, 0.3, 1); }
-        #app.visible { transform: scale(1); filter: blur(0); }
+        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; transform: scale(1.1); filter: blur(5px); transition: all 2.5s cubic-bezier(0.7, 0, 0.3, 1); opacity: 0; }
+        #app.visible { transform: scale(1); filter: blur(0); opacity: 1; }
         
-        .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.05) 1deg 2deg); z-index: -1; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
-        .speed-lines.active { opacity: 1; }
-        .palace-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #fff 0%, #fcfaf2 100%); z-index: -2; }
-
-        #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
-        .flash-active { animation: flash-anim 0.3s forwards; }
-        @keyframes flash-anim { 0% { opacity: 1; } 100% { opacity: 0; } }
-
-        @keyframes screen-shake { 0%, 100% { transform: translate(0,0); } 10%, 30%, 50%, 70%, 90% { transform: translate(-8px,-8px); } 20%, 40%, 60%, 80% { transform: translate(8px,8px); } }
-        .shake-screen { animation: screen-shake 0.4s ease-in-out; }
-
         .status-bar { height: 60px; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 2px solid #ddd; z-index: 1000; gap: 5px; }
         .bar-labels { display: flex; justify-content: space-between; width: 50%; font-weight: 900; font-size: 0.9rem; color: #666; }
         .stance-container { width: 50%; height: 10px; background: #eee; border-radius: 5px; overflow: hidden; display: flex; }
@@ -76,7 +71,6 @@
         .reformists { background: #c0392b; }
 
         .court-layout { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 30px; }
-        
         .badge-circle { 
             width: 100px; height: 100px; border-radius: 50%; 
             display: flex; justify-content: center; align-items: center;
@@ -84,11 +78,12 @@
             font-size: 1.8rem; font-weight: 900;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer; border: 4px solid #fff; position: relative;
+            cursor: pointer; border: 4px solid #fff;
         }
         .royal .badge-circle { width: 130px; height: 130px; background: var(--royal-red); border-color: var(--royal-gold); font-size: 2.2rem; }
         .character.active .badge-circle { transform: scale(1.2); box-shadow: 0 0 40px rgba(0,0,0,0.3); border-color: var(--royal-gold); z-index: 10; }
         .character.angry .badge-circle { animation: pulse-red 0.5s infinite; background: var(--angry-red) !important; }
+        @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 10px var(--angry-red); } 50% { box-shadow: 0 0 40px var(--angry-red); } }
 
         .royal-row { display: flex; justify-content: center; align-items: center; gap: 50px; height: 180px; }
         .ministers-floor { display: flex; justify-content: space-around; flex: 1; align-items: flex-start; }
@@ -101,13 +96,24 @@
         .speech-text { font-size: 1.9rem; line-height: 1.6; color: #000; font-weight: 700; min-height: 2.4em; }
 
         .controls { display: flex; gap: 20px; width: 100%; max-width: 900px; justify-content: flex-end; }
-        .btn-control { background: #333; color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); transition: transform 0.1s; }
+        .btn-control { background: #333; color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); }
 
-        .term { color: var(--gold); border-bottom: 2px solid var(--gold); cursor: help; }
-        #wiki-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 450px; background: #fff; border-radius: 20px; padding: 35px; border: 4px solid var(--gold); z-index: 20000; display: none; }
+        .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.05) 1deg 2deg); z-index: -1; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        .speed-lines.active { opacity: 1; }
+        .palace-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #fff 0%, #fcfaf2 100%); z-index: -2; }
+        #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
+        .flash-active { animation: flash-anim 0.3s forwards; }
+        @keyframes screen-shake { 0%, 100% { transform: translate(0,0); } 10%, 30%, 50%, 70%, 90% { transform: translate(-8px,-8px); } 20%, 40%, 60%, 80% { transform: translate(8px,8px); } }
+        .shake-screen { animation: screen-shake 0.4s ease-in-out; }
     </style>
 </head>
 <body>
+    <!-- 音頻資源：史詩感背景音樂 -->
+    <audio id="bgm" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
+    </audio>
+    <button id="audio-toggle" onclick="toggleAudio()">音頻：ON</button>
+
     <!-- 序幕與宮門 -->
     <div id="intro-overlay">
         <div class="door door-left"></div>
@@ -160,30 +166,17 @@
         </main>
     </div>
 
-    <div id="wiki-modal">
-        <h2 id="wiki-title"></h2>
-        <p id="wiki-content"></p>
-        <button onclick="closeWiki()" style="margin-top:20px; background:var(--gold); color:#fff; border:none; padding:10px 20px; cursor:pointer;">關閉</button>
-    </div>
-
     <script>
-        const wikiData = {
-            "元孫": "即昭顯世子之長子。按照『世嫡承統』原則應繼位，但仁祖欲改立鳳林大君。",
-            "世孫": "即元孫。在本文中指昭顯世子之子。",
-            "鳳林大君": "仁祖次子，後來的朝鮮孝宗。他在瀋陽質留多年，支持北伐。",
-            "德宗": "世祖長子懿敬世子。其早逝導致世祖改立次子睿宗，是仁祖引用最重要的先例。"
-        };
-
         const dialogue = [
-            { speaker: "上", text: "予有宿疾，往往而劇，元孫如彼其微弱。予觀今日之形勢，不可以待小兒之成長。未知卿等之意以爲何如？", special: "shake", stance: 5 },
+            { speaker: "上", text: "予有宿疾，往往而劇，元孫如彼其微弱. 予觀今日之形勢，不可以待小兒之成長. 未知卿等之意以爲何如？", special: "shake", stance: 5 },
             { speaker: "瑬", text: "朝野方頌岡陵之祝，而殿下遽出此言，臣等罔知所達。", stance: -2 },
-            { speaker: "上", text: "非徒疾病如此，國事日阽於艱危，脱有不諱，幼沖之主恐不能擔當大器。予欲於大君中擇立爾。", special: "speed", stance: 8 },
+            { speaker: "上", text: "非徒疾病如此，國事日阽於艱危，脱有不諱，幼沖之主恐不能擔當大器. 予欲於大君中擇立爾。", special: "speed", stance: 8 },
             { speaker: "瑬", text: "今此下教，雖出於爲宗社之大計，而臣等惶惑不知所言，宜博詢諸臣。", stance: -2 },
-            { speaker: "瑞鳳", text: "考諸往牒，太子不在，繼以太孫，此乃不易之常經。反常行權，恐非國家之福。", special: "shake", stance: -10 },
+            { speaker: "瑞鳳", text: "考諸往牒，太子不在，繼以太孫，此乃不易之常經. 反常行權，恐非國家之福。", special: "shake", stance: -10 },
             { speaker: "上", text: "雖在治平之世，必以國有長君爲福，況今日乎？", stance: 5 },
-            { speaker: "悦", text: "瑞鳳之言，正合臣意。殿下雖有微恙，春秋鼎盛，元孫雖曰微弱，已至十歲。自古幼主之繼緒者何限？宗統甚重，恐不可輕議也。", stance: -6 },
+            { speaker: "悦", text: "瑞鳳之言，正合臣意. 殿下雖有微恙，春秋鼎盛，元孫雖曰微弱，已至十歲. 自古幼主之繼緒者何限？宗統甚重，恐不可輕議也。", stance: -6 },
             { speaker: "自點", text: "殿下以疾病之未平、時事之艱虞，爲宗社、生民之大計，而發此言，宜更詢于諸臣而決之。", stance: 3 },
-            { speaker: "敬輿", text: "臣之愚見，與瑞鳳無異。世嫡承統，今古之常經，常經之外更無所陳。大抵能守常經，則雖屬艱虞，而猶可以保國。若邊用權道，則群情不服而多致患難。今者擧國之係望於元孫已久，若聞此言，則中外人心，必皆波蕩，甚可懼也。", special: "shake", stance: -12 },
+            { speaker: "敬輿", text: "臣之愚見，與瑞鳳無異. 世嫡承統，今古之常經，常經之外更無所陳. 大抵能守常經，則雖屬艱虞，而猶可以保國. 若邊用權道，則群情不服而多致患難. 今者擧國之係望於元孫已久，若聞此言，則中外人心，必皆波蕩，甚可懼也。", special: "shake", stance: -12 },
             { speaker: "上", text: "我世祖不傳於元孫，傳於睿宗，當時朝臣無異議，果皆不忠者耶？大臣當國家之大事，宜任其責，而徒以循常之談，為塞責之地，此豈大臣之道耶？", special: "shake", stance: 10 },
             { speaker: "上", text: "（謂瑬曰）此事專在於領相，卿其決之。", special: "flash", stance: 10 },
             { speaker: "瑬", text: "臣雖忝首相，顧安敢獨斷乎？若明知宗社存亡決於此舉，則群臣固無敢異議者，而今日之舉，未見其必係於存亡，而欲行非常之道，此臣等之所以不敢輕議也。", stance: -5 },
@@ -217,9 +210,9 @@
             { speaker: "德泂", text: "既正元孫之名，又立輔養之官，則位號之定久矣. 經常不易之典，可考信於往牒也. 人臣之道，猝當反常之舉，當以守經爭之乎，抑將以處權順之乎？今日聖教，雖以宗社之計為言，而猝然一朝，欲易已正之名號，群臣若靡然從之，則將焉用彼臣為哉？", special: "shake", stance: -12 },
             { speaker: "上", text: "（默然良久曰）大臣之意，則皆歸於一耶？", special: "flash", stance: 5 },
             { speaker: "瑬", text: "似無異議也。", stance: 10 },
-            { speaker: "上", text: "不幸諸子皆沒，只有二人，大臣擇賢而定之。此非嫡長之比，唯當擇其賢耳。", stance: 8 },
+            { speaker: "上", text: "不幸諸子皆沒，只有二人，大臣擇賢而定之. 此非嫡長之比，唯當擇其賢耳。", stance: 8 },
             { speaker: "瑞鳳", text: "大君與朝臣，無相接之事，何能知其優劣乎？古人云：『知子莫如父. 』此在睿斷而已。", stance: 5 },
-            { speaker: "上", text: "二人皆劣，無所取舍。予欲立長，未知何如？", stance: 12 },
+            { speaker: "上", text: "二人皆劣，無所取舍. 予欲立長，未知何如？", stance: 12 },
             { speaker: "瑬", text: "立嫡以長，順也。", stance: 10 },
             { speaker: "上", text: "然. 清使將來，必問國本，故不得不急急議定耳.", special: "speed", stance: 10 },
             { speaker: "瑬", text: "此外更無可議，須明白下教，使群臣明知之。", stance: 5 },
@@ -228,48 +221,45 @@
             { speaker: "史官", text: "（左右竊笑）上曰：『無庸為也。』瑬請令禮曹奉行，上曰：『徐為之未晚也。』", stance: 0 }
         ];
 
-        const ministersData = {
-            "瑬": "a", "自點": "a", "瑞鳳": "b", "敬輿": "b", "景奭": "b", "堉": "b",
-            "悦": "c", "壽賢": "c", "太和": "c", "楘": "c", "爾徵": "c", "德泂": "c", "仁垕": "c", "時白": "c", "植": "c"
-        };
+        const ministersData = { "瑬": "a", "自點": "a", "瑞鳳": "b", "敬輿": "b", "景奭": "b", "堉": "b", "悦": "c", "壽賢": "c", "太和": "c", "楘": "c", "爾徵": "c", "德泂": "c", "仁垕": "c", "時白": "c", "植": "c" };
 
         function openPalaceGates() {
             document.getElementById('intro-overlay').classList.add('open');
-            setTimeout(() => {
-                document.getElementById('app').classList.add('visible');
-            }, 500);
-            setTimeout(() => {
-                document.getElementById('intro-overlay').style.display = 'none';
-            }, 3000);
+            const bgm = document.getElementById('bgm');
+            bgm.play(); // 觸發音樂播放
+            document.getElementById('audio-toggle').style.display = 'block';
+            setTimeout(() => document.getElementById('app').classList.add('visible'), 500);
+            setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 3000);
+        }
+
+        function toggleAudio() {
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('audio-toggle');
+            if (bgm.paused) { bgm.play(); btn.innerText = "音頻：ON"; }
+            else { bgm.pause(); btn.innerText = "音頻：OFF"; }
         }
 
         function showIntroTexts() {
             const texts = document.querySelectorAll('.intro-text');
-            texts.forEach((t, i) => {
-                setTimeout(() => t.classList.add('visible'), i * 1500 + 500);
-            });
+            texts.forEach((t, i) => setTimeout(() => t.classList.add('visible'), i * 1500 + 500));
             setTimeout(() => document.getElementById('start-btn').classList.add('visible'), texts.length * 1500 + 1000);
         }
 
         let currentIndex = -1, isTyping = false, typingTimer = null, currentStanceBalance = 50;
-
         function typeText(element, text) {
             if (typingTimer) clearInterval(typingTimer);
-            isTyping = true; element.innerHTML = "";
-            let i = 0;
+            isTyping = true; element.innerHTML = ""; let i = 0;
             typingTimer = setInterval(() => {
                 if (i < text.length) { element.innerHTML += text.charAt(i); i++; }
-                else { clearInterval(typingTimer); element.innerHTML = formatText(element.innerHTML); isTyping = false; }
+                else { clearInterval(typingTimer); isTyping = false; }
             }, 30);
         }
-
         function triggerSpecial(type) {
             const stage = document.getElementById('main-stage'), flash = document.getElementById('flash'), speed = document.getElementById('speed-lines');
             if (type === "shake") { stage.classList.add('shake-screen'); setTimeout(() => stage.classList.remove('shake-screen'), 400); }
             else if (type === "flash") { flash.classList.add('flash-active'); setTimeout(() => flash.classList.remove('flash-active'), 300); }
             else if (type === "speed") { speed.classList.add('active'); setTimeout(() => speed.classList.remove('active'), 1000); }
         }
-
         function updateUI() {
             const entry = dialogue[currentIndex];
             document.getElementById('speaker').innerText = entry.speaker;
@@ -282,8 +272,7 @@
             document.querySelectorAll('.character').forEach(c => { c.classList.remove('active'); c.classList.remove('angry'); });
             let targetId = (entry.speaker === "上") ? 'char-king' : `char-${entry.speaker}`;
             if (document.getElementById(targetId)) {
-                const el = document.getElementById(targetId);
-                el.classList.add('active');
+                const el = document.getElementById(targetId); el.classList.add('active');
                 if (entry.stance >= 12 || entry.special === "shake") el.classList.add('angry');
             }
             if (entry.text.includes("鳳林")) document.getElementById('char-bongnim').classList.add('active');
@@ -291,9 +280,8 @@
             if (entry.text.includes("元孫") || entry.text.includes("世孫")) document.getElementById('char-sesun').classList.add('active');
             document.getElementById('btn-prev').disabled = (currentIndex <= 0);
         }
-
         function nextDialogue() {
-            if (isTyping) { clearInterval(typingTimer); document.getElementById('speech').innerHTML = formatText(dialogue[currentIndex].text); isTyping = false; return; }
+            if (isTyping) { clearInterval(typingTimer); document.getElementById('speech').innerHTML = dialogue[currentIndex].text; isTyping = false; return; }
             if (currentIndex < dialogue.length - 1) { currentIndex++; updateUI(); }
         }
         function prevDialogue() {
@@ -305,9 +293,6 @@
                 updateUI();
             }
         }
-        function formatText(text) { let res = text; Object.keys(wikiData).forEach(k => { res = res.replace(new RegExp(k, 'g'), `<span class="term" onclick="event.stopPropagation(); showWiki('${k}')">${k}</span>`); }); return res; }
-        function showWiki(term) { alert(term + ": " + wikiData[term]); }
-
         function init() {
             for (let name in ministersData) {
                 const group = ministersData[name], grid = document.getElementById('min-' + group), div = document.createElement('div');
