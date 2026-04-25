@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 和諧對決版</title>
+    <title>朝廷爭議 V2 - 三大陣營對壘版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,167 +11,64 @@
             --gold: #d4af37;
             --ink-black: #0a0a0a;
             --paper-white: #f4f1ea;
-            --reform-color: #ff4757;
-            --tradition-color: #2e86de;
+            --a-color: #ffd700; /* 權力核心 - 金色 */
+            --b-color: #2e86de; /* 守經派 - 藍色 */
+            --c-color: #95a5a6; /* 其他 - 灰色 */
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: var(--ink-black);
-            color: var(--paper-white);
-            font-family: 'Noto Serif TC', serif;
-            overflow: hidden;
-            height: 100vh;
-        }
-        #app {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        .palace-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #2c0a0a 0%, #000 100%);
-            z-index: -2;
-        }
+        body { background: var(--ink-black); color: var(--paper-white); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
+        #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .palace-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #2c0a0a 0%, #000 100%); z-index: -2; }
 
-        /* 1. 狀態條：收細，固定在最頂部 */
-        .status-bar {
-            height: 60px;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-bottom: 2px solid var(--gold);
-            padding: 0 20px;
-            z-index: 1000;
-        }
-        .stance-container {
-            width: 60%;
-            height: 20px;
-            background: #000;
-            border: 1px solid var(--gold);
-            display: flex;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .stance {
-            transition: width 0.8s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 900;
-            color: white;
-        }
-        .traditionalists { background: var(--tradition-color); }
-        .reformists { background: var(--reform-color); }
+        .status-bar { height: 60px; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--gold); padding: 0 20px; z-index: 1000; }
+        .stance-container { width: 50%; height: 16px; background: #000; border: 1px solid var(--gold); display: flex; border-radius: 8px; overflow: hidden; }
+        .stance { transition: width 0.8s ease; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: white; }
+        .traditionalists { background: var(--b-color); }
+        .reformists { background: #e74c3c; }
 
-        .king-mood-indicator {
-            position: absolute; right: 20px; top: 15px; display: flex; align-items: center; gap: 10px;
-        }
-        #king-mood-label { font-size: 14px; color: var(--gold); font-weight: 900; }
-        .mood-bar { width: 100px; height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
+        .king-mood-indicator { position: absolute; right: 20px; top: 18px; display: flex; align-items: center; gap: 10px; }
+        #king-mood-label { font-size: 12px; color: var(--gold); font-weight: 900; }
+        .mood-bar { width: 80px; height: 4px; background: #222; border-radius: 2px; overflow: hidden; }
         #mood-fill { height: 100%; background: #f00; width: 20%; transition: width 0.5s; }
 
-        /* 2. 核心佈局：確保人物有足夠垂直空間 */
-        .court-layout {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            position: relative;
-        }
-        .king-throne {
-            height: 40%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .ministers-floor {
-            height: 30%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 40px;
-        }
-        .minister-wing {
-            display: flex;
-            gap: 10px;
-            position: relative;
-        }
-        .wing-label {
-            position: absolute; top: -30px; width: 100%; text-align: center;
-            font-size: 1rem; font-weight: 900; color: var(--gold); opacity: 0.5;
-        }
+        .court-layout { flex: 1; display: flex; flex-direction: column; padding: 10px; position: relative; }
+        .king-throne { height: 35%; display: flex; justify-content: center; align-items: center; }
+        
+        /* 三大陣營佈局 */
+        .ministers-floor { height: 35%; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 20px; }
+        .minister-wing { display: flex; gap: 8px; position: relative; min-width: 150px; justify-content: center; padding-bottom: 10px; }
+        .wing-label { position: absolute; top: -35px; width: 100%; text-align: center; font-size: 1.1rem; font-weight: 900; color: var(--gold); letter-spacing: 2px; text-shadow: 0 0 10px var(--gold); }
+        
+        .wing-a { border-top: 2px solid var(--a-color); padding-top: 5px; }
+        .wing-b { border-top: 2px solid var(--b-color); padding-top: 5px; }
+        .wing-c { border-top: 2px solid var(--c-color); padding-top: 5px; }
 
-        /* 3. 對話框：下沉到最底部，不遮擋人物 */
-        .dialogue-center {
-            height: 30%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            padding-bottom: 20px;
-        }
-        .dialogue-box {
-            width: 90%;
-            max-width: 1000px;
-            background: rgba(10, 10, 10, 0.9);
-            border: 2px solid var(--gold);
-            padding: 25px 40px;
-            border-radius: 15px;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-        }
-        .speaker-name {
-            color: var(--gold); font-size: 1.5rem; font-weight: 900; margin-bottom: 10px;
-            text-shadow: 0 0 5px rgba(212,175,55,0.5);
-        }
-        .speech-text {
-            font-size: 1.8rem; line-height: 1.4; color: #fff; font-weight: 500;
-        }
-        .click-hint { font-size: 12px; color: var(--gold); opacity: 0.6; margin-top: 15px; }
+        .dialogue-center { height: 30%; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; }
+        .dialogue-box { width: 95%; max-width: 900px; background: rgba(5, 5, 5, 0.95); border: 2px solid var(--gold); padding: 20px 40px; border-radius: 12px; cursor: pointer; text-align: center; }
+        .speaker-name { color: var(--gold); font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; }
+        .speech-text { font-size: 1.8rem; line-height: 1.4; color: #fff; font-weight: 500; }
+        .click-hint { font-size: 11px; color: var(--gold); opacity: 0.5; margin-top: 10px; }
 
-        /* 4. 人物縮放優化：適度放大 */
-        .character {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.5s ease;
-            filter: grayscale(0.8) brightness(0.5);
-        }
-        .character.active {
-            filter: grayscale(0) brightness(1.2) drop-shadow(0 0 20px var(--gold));
-            transform: scale(1.4) translateY(-20px);
-            z-index: 100;
-        }
+        .character { display: flex; flex-direction: column; align-items: center; transition: all 0.4s ease; filter: grayscale(0.5) brightness(0.6); }
+        .character.active { filter: grayscale(0) brightness(1.2) drop-shadow(0 0 15px var(--gold)); transform: scale(1.3) translateY(-15px); z-index: 100; }
         .silhouette { background-size: contain; background-repeat: no-repeat; background-position: bottom; image-rendering: pixelated; }
+        
         .king-sil { 
             background-image: url('characters_sheet.png'); 
-            background-color: transparent !important; 
             background-size: 900% 200%;
             background-position: 0% 0%; 
-            width: 120px; 
-            height: 220px;
-            filter: contrast(1.1) brightness(1.1) drop-shadow(0 0 10px rgba(0,0,0,0.5));
-            transform-origin: bottom;
+            width: 110px; height: 180px; 
         }
         .min-sil { 
             background-image: url('characters_sheet.png'); 
             background-size: 900% 200%;
             background-position: var(--pos-x, 0%) var(--pos-y, 0%);
-            width: 90px; 
-            height: 160px;
-            /* 裁剪掉底部姓名區域 */
-            clip-path: inset(0 0 15% 0); 
-            filter: saturate(1.1) brightness(0.9);
+            width: 80px; height: 150px;
+            clip-path: inset(0 0 15% 0); /* 裁切掉名字 */
         }
-        .name-tag { margin-top: 5px; font-size: 11px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 2px 6px; }
+        .name-tag { margin-top: 4px; font-size: 10px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 1px 4px; }
 
-        .fog-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: linear-gradient(to top, #000, transparent); pointer-events: none; z-index: 5; }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-3px, 2px); } 100% { transform: translate(1px, -2px); } }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-2px, 2px); } 100% { transform: translate(1px, -1px); } }
         .shake { animation: shake 0.2s infinite; }
     </style>
 </head>
@@ -180,8 +77,8 @@
         <div class="palace-bg"></div>
         <header class="status-bar">
             <div class="stance-container">
-                <div class="stance traditionalists" id="bar-traditional"><span>守經派</span></div>
-                <div class="stance reformists" id="bar-reform"><span>權變派</span></div>
+                <div class="stance traditionalists" id="bar-traditional"><span>守經</span></div>
+                <div class="stance reformists" id="bar-reform"><span>權變</span></div>
             </div>
             <div class="king-mood-indicator">
                 <div id="king-mood-label">王之意</div>
@@ -196,18 +93,18 @@
                 </div>
             </div>
             <div class="ministers-floor">
-                <div class="minister-wing left" id="min-left"><div class="wing-label">守經</div></div>
-                <div class="minister-wing right" id="min-right"><div class="wing-label">權變</div></div>
+                <div class="minister-wing wing-b" id="min-b"><div class="wing-label">B組：守經主力</div></div>
+                <div class="minister-wing wing-a" id="min-a"><div class="wing-label">A組：權力核心</div></div>
+                <div class="minister-wing wing-c" id="min-c"><div class="wing-label">C組：其他參與者</div></div>
             </div>
             <div class="dialogue-center">
                 <section class="dialogue-box" id="dialogue-box">
                     <div class="speaker-name" id="speaker">宮廷史官</div>
-                    <div class="speech-text" id="speech">點擊開始這場決定宗社命運的對話。</div>
+                    <div class="speech-text" id="speech">點擊開始對話。</div>
                     <div class="click-hint">點擊屏幕繼續 ▽</div>
                 </section>
             </div>
         </main>
-        <div class="fog-overlay"></div>
     </div>
     <script>
         const dialogue = [
@@ -243,37 +140,35 @@
             { speaker: "史官", text: "時上怒甚，左右皆不敢言。", mood: 100, stance: 0 }
         ];
         const ministersData = {
-            "瑬": { px: '12.5%', py: '0%', faction: 'trad' },
-            "瑞鳳": { px: '25%', py: '0%', faction: 'trad' },
-            "悦": { px: '37.5%', py: '0%', faction: 'trad' },
-            "自點": { px: '50%', py: '0%', faction: 'reform' },
-            "敬輿": { px: '62.5%', py: '0%', faction: 'trad' },
-            "德泂": { px: '37.5%', py: '100%', faction: 'trad' },
-            "仁垕": { px: '50%', py: '100%', faction: 'reform' },
-            "時白": { px: '62.5%', py: '100%', faction: 'trad' },
-            "景奭": { px: '75%', py: '100%', faction: 'trad' },
-            "植": { px: '75%', py: '0%', faction: 'trad' },
-            "壽賢": { px: '87.5%', py: '0%', faction: 'reform' },
-            "堉": { px: '100%', py: '0%', faction: 'trad' },
-            "太和": { px: '0%', py: '100%', faction: 'trad' },
-            "楘": { px: '100%', py: '100%', faction: 'trad' },
-            "爾徵": { px: '25%', py: '100%', faction: 'trad' }
+            "瑬": { px: '12.5%', py: '0%', group: 'a' },
+            "自點": { px: '50%', py: '0%', group: 'a' },
+            "瑞鳳": { px: '25%', py: '0%', group: 'b' },
+            "敬輿": { px: '62.5%', py: '0%', group: 'b' },
+            "景奭": { px: '75%', py: '100%', group: 'b' },
+            "堉": { px: '100%', py: '0%', group: 'b' },
+            "悦": { px: '37.5%', py: '0%', group: 'c' },
+            "壽賢": { px: '87.5%', py: '0%', group: 'c' },
+            "太和": { px: '0%', py: '100%', group: 'c' },
+            "楘": { px: '100%', py: '100%', group: 'c' },
+            "爾徵": { px: '25%', py: '100%', group: 'c' },
+            "德泂": { px: '37.5%', py: '100%', group: 'c' },
+            "仁垕": { px: '50%', py: '100%', group: 'c' },
+            "時白": { px: '62.5%', py: '100%', group: 'c' },
+            "植": { px: '75%', py: '0%', group: 'c' }
         };
         let currentIndex = -1;
         let currentStanceBalance = 50; 
         function init() {
-            const leftWing = document.getElementById('min-left');
-            const rightWing = document.getElementById('min-right');
             Object.keys(ministersData).forEach(name => {
                 const data = ministersData[name];
+                const wing = document.getElementById('min-' + data.group);
                 const div = document.createElement('div');
                 div.className = 'character minister';
                 div.id = `char-${name}`;
                 div.style.setProperty('--pos-x', data.px);
                 div.style.setProperty('--pos-y', data.py);
                 div.innerHTML = `<div class="silhouette min-sil"></div><div class="name-tag">${name}</div>`;
-                if (data.faction === 'trad') leftWing.appendChild(div);
-                else rightWing.appendChild(div);
+                wing.appendChild(div);
             });
             document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
         }
