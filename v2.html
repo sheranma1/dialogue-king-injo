@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 三大陣營對壘版</title>
+    <title>朝廷爭議 V2 - 百科全書版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,9 +11,9 @@
             --gold: #d4af37;
             --ink-black: #0a0a0a;
             --paper-white: #f4f1ea;
-            --a-color: #ffd700; /* 權力核心 - 金色 */
-            --b-color: #2e86de; /* 守經派 - 藍色 */
-            --c-color: #95a5a6; /* 其他 - 灰色 */
+            --a-color: #ffd700;
+            --b-color: #2e86de;
+            --c-color: #95a5a6;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--ink-black); color: var(--paper-white); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
@@ -26,45 +26,42 @@
         .traditionalists { background: var(--b-color); }
         .reformists { background: #e74c3c; }
 
-        .king-mood-indicator { position: absolute; right: 20px; top: 18px; display: flex; align-items: center; gap: 10px; }
-        #king-mood-label { font-size: 12px; color: var(--gold); font-weight: 900; }
-        .mood-bar { width: 80px; height: 4px; background: #222; border-radius: 2px; overflow: hidden; }
-        #mood-fill { height: 100%; background: #f00; width: 20%; transition: width 0.5s; }
-
         .court-layout { flex: 1; display: flex; flex-direction: column; padding: 10px; position: relative; }
         .king-throne { height: 35%; display: flex; justify-content: center; align-items: center; }
         
-        /* 三大陣營佈局 */
         .ministers-floor { height: 35%; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 20px; }
         .minister-wing { display: flex; gap: 8px; position: relative; min-width: 150px; justify-content: center; padding-bottom: 10px; }
-        .wing-label { position: absolute; top: -35px; width: 100%; text-align: center; font-size: 1.1rem; font-weight: 900; color: var(--gold); letter-spacing: 2px; text-shadow: 0 0 10px var(--gold); }
+        .wing-label { position: absolute; top: -35px; width: 100%; text-align: center; font-size: 1.1rem; font-weight: 900; color: var(--gold); letter-spacing: 2px; }
         
-        .wing-a { border-top: 2px solid var(--a-color); padding-top: 5px; }
-        .wing-b { border-top: 2px solid var(--b-color); padding-top: 5px; }
-        .wing-c { border-top: 2px solid var(--c-color); padding-top: 5px; }
+        .character { display: flex; flex-direction: column; align-items: center; transition: all 0.4s ease; filter: grayscale(0.5) brightness(0.6); }
+        .character.active { filter: grayscale(0) brightness(1.2) drop-shadow(0 0 15px var(--gold)); transform: scale(1.3) translateY(-15px); z-index: 100; }
+        .silhouette { background-image: url('characters_sheet.png'); background-size: 900% 200%; background-repeat: no-repeat; image-rendering: pixelated; }
+        
+        /* 恢復全身像比例 */
+        .king-sil { background-position: 0% 0%; width: 140px; height: 220px; }
+        .min-sil { background-position: var(--pos-x, 0%) var(--pos-y, 0%); width: 110px; height: 180px; clip-path: inset(0 0 15% 0); }
+        .name-tag { margin-top: 4px; font-size: 10px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 1px 4px; }
 
         .dialogue-center { height: 30%; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; }
         .dialogue-box { width: 95%; max-width: 900px; background: rgba(5, 5, 5, 0.95); border: 2px solid var(--gold); padding: 20px 40px; border-radius: 12px; cursor: pointer; text-align: center; }
         .speaker-name { color: var(--gold); font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; }
         .speech-text { font-size: 1.8rem; line-height: 1.4; color: #fff; font-weight: 500; }
-        .click-hint { font-size: 11px; color: var(--gold); opacity: 0.5; margin-top: 10px; }
 
-        .character { display: flex; flex-direction: column; align-items: center; transition: all 0.4s ease; filter: grayscale(0.5) brightness(0.6); }
-        .character.active { filter: grayscale(0) brightness(1.2) drop-shadow(0 0 15px var(--gold)); transform: scale(1.3) translateY(-15px); z-index: 100; }
-        .silhouette { background-size: 1536px 1024px; background-repeat: no-repeat; image-rendering: pixelated; }
-        
-        .king-sil { 
-            background-image: url('characters_sheet.png'); 
-            background-position: -25px -15px; 
-            width: 120px; height: 180px; 
+        /* 人物百科詞條樣式 */
+        .term { color: var(--gold); font-weight: 900; text-decoration: underline dashed; cursor: help; transition: color 0.3s; }
+        .term:hover { color: #fff; background: rgba(212,175,55,0.2); }
+
+        /* 百科彈窗 */
+        #wiki-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 500px; background: #111; border: 3px solid var(--gold);
+            padding: 30px; border-radius: 15px; z-index: 5000;
+            display: none; box-shadow: 0 0 100px rgba(0,0,0,1);
         }
-        .min-sil { 
-            background-image: url('characters_sheet.png'); 
-            background-position: var(--pos-px, 0px) var(--pos-py, 0px);
-            width: 120px; height: 160px;
-            clip-path: inset(0 0 15% 0); /* 裁切掉名字 */
-        }
-        .name-tag { margin-top: 4px; font-size: 10px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 1px 4px; }
+        #wiki-modal h2 { color: var(--gold); margin-bottom: 15px; border-bottom: 1px solid var(--gold); padding-bottom: 10px; }
+        #wiki-modal p { line-height: 1.6; color: #ccc; font-size: 1.1rem; }
+        #wiki-close { margin-top: 20px; background: var(--gold); color: #000; border: none; padding: 5px 15px; cursor: pointer; font-weight: 900; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 4999; display: none; }
 
         @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-2px, 2px); } 100% { transform: translate(1px, -1px); } }
         .shake { animation: shake 0.2s infinite; }
@@ -77,10 +74,6 @@
             <div class="stance-container">
                 <div class="stance traditionalists" id="bar-traditional"><span>守經</span></div>
                 <div class="stance reformists" id="bar-reform"><span>權變</span></div>
-            </div>
-            <div class="king-mood-indicator">
-                <div id="king-mood-label">王之意</div>
-                <div class="mood-bar"><div id="mood-fill"></div></div>
             </div>
         </header>
         <main class="court-layout">
@@ -98,13 +91,32 @@
             <div class="dialogue-center">
                 <section class="dialogue-box" id="dialogue-box">
                     <div class="speaker-name" id="speaker">宮廷史官</div>
-                    <div class="speech-text" id="speech">點擊開始對話。</div>
+                    <div class="speech-text" id="speech">點擊開始這場決定宗社命運的對話。</div>
                     <div class="click-hint">點擊屏幕繼續 ▽</div>
                 </section>
             </div>
         </main>
     </div>
+
+    <div class="modal-overlay" id="wiki-overlay"></div>
+    <div id="wiki-modal">
+        <h2 id="wiki-title">人物名稱</h2>
+        <p id="wiki-content">歷史背景信息...</p>
+        <button id="wiki-close">關閉</button>
+    </div>
+
     <script>
+        const wikiData = {
+            "元孫": "即昭顯世子之長子（後來的慶善君李栢）。按照「世嫡承統」的原則，世子死後應由其長子繼位。但在本次爭議中，仁祖試圖跳過元孫，改立次子鳳林大君。",
+            "鳳林大君": "仁祖之次子，後來的朝鮮孝宗。在昭顯世子離奇死亡後，被仁祖選定為繼承人。他曾在瀋陽作為人質多年，回國後支持仁祖的北伐政策。",
+            "領相": "指領議政，當時由金瑬擔任。是朝廷中職位最高的官員，掌握著議定儲君的關鍵影響力。",
+            "睿宗": "朝鮮第七代國王世祖之次子。曾因世祖改立長君的先例被仁祖引用，作為改立鳳林大君的歷史依據。",
+            "世祖": "朝鮮第七代國王，通過「癸酉靖難」篡位奪權。他在繼承人問題上曾打破常規，由次子睿宗繼承，而非長孫。",
+            "昭顯世子": "仁祖的長子，長期在清朝作為人質。回國後不久離奇死亡，引發了本次嚴重的繼承人危機。",
+            "德宗": "即世祖的長子，昭顯世子的追封封號。他的早逝导致了世祖朝的继承争议。",
+            "月山大君": "德宗的長子，成宗的哥哥。雖然是嫡長孫，但在世祖朝因年幼被跳過，由睿宗繼位。"
+        };
+
         const dialogue = [
             { speaker: "上", text: "予有宿疾，往往而劇，元孫如彼其微弱。予觀今日之形勢，不可以待小兒之成長。未知卿等之意以爲何如？", mood: 20, stance: 0 },
             { speaker: "瑬", text: "朝野方頌岡陵之祝，而殿下遽出此言，臣等罔知所達。", mood: 25, stance: -5 },
@@ -153,25 +165,51 @@
             { speaker: "史官", text: "（左右竊笑）上曰：『無庸為也。』瑬請令禮曹奉行，上曰：『徐為之未晚也。』", mood: 50, stance: 0 },
             { speaker: "史臣曰", text: "光廟之薨，成廟之年十二歲... 瑬非不知睿宗冊封在於成宗始生之年，而佯若不知... 其逢迎之狀，不可不表而出之也。嗚呼！直道之謂君子，承順之謂鄙夫，至於逢迎，則小人而已矣。", mood: 100, stance: 0 }
         ];
+
         const ministersData = {
-            "瑬": { px: '-190px', py: '-15px', group: 'a' },
-            "自點": { px: '-705px', py: '-15px', group: 'a' },
-            "瑞鳳": { px: '-365px', py: '-15px', group: 'b' },
-            "敬輿": { px: '-875px', py: '-15px', group: 'b' },
-            "景奭": { px: '-1050px', py: '-525px', group: 'b' },
-            "堉": { px: '-1390px', py: '-15px', group: 'b' },
-            "悦": { px: '-535px', py: '-15px', group: 'c' },
-            "壽賢": { px: '-1220px', py: '-15px', group: 'c' },
-            "太和": { px: '-25px', py: '-525px', group: 'c' },
-            "楘": { px: '-1390px', py: '-525px', group: 'c' },
-            "爾徵": { px: '-365px', py: '-525px', group: 'c' },
-            "德泂": { px: '-535px', py: '-525px', group: 'c' },
-            "仁垕": { px: '-705px', py: '-525px', group: 'c' },
-            "時白": { px: '-875px', py: '-525px', group: 'c' },
-            "植": { px: '-1045px', py: '-15px', group: 'c' }
+            "瑬": { px: '12.5%', py: '0%', group: 'a' },
+            "自點": { px: '50%', py: '0%', group: 'a' },
+            "瑞鳳": { px: '25%', py: '0%', group: 'b' },
+            "敬輿": { px: '62.5%', py: '0%', group: 'b' },
+            "景奭": { px: '75%', py: '100%', group: 'b' },
+            "堉": { px: '100%', py: '0%', group: 'b' },
+            "悦": { px: '37.5%', py: '0%', group: 'c' },
+            "壽賢": { px: '87.5%', py: '0%', group: 'c' },
+            "太和": { px: '0%', py: '100%', group: 'c' },
+            "楘": { px: '100%', py: '100%', group: 'c' },
+            "爾徵": { px: '25%', py: '100%', group: 'c' },
+            "德泂": { px: '37.5%', py: '100%', group: 'c' },
+            "仁垕": { px: '50%', py: '100%', group: 'c' },
+            "時白": { px: '62.5%', py: '100%', group: 'c' },
+            "植": { px: '75%', py: '0%', group: 'c' }
         };
+
         let currentIndex = -1;
         let currentStanceBalance = 50; 
+
+        function showWiki(term) {
+            if (wikiData[term]) {
+                document.getElementById('wiki-title').innerText = term;
+                document.getElementById('wiki-content').innerText = wikiData[term];
+                document.getElementById('wiki-modal').style.display = 'block';
+                document.getElementById('wiki-overlay').style.display = 'block';
+            }
+        }
+
+        function closeWiki() {
+            document.getElementById('wiki-modal').style.display = 'none';
+            document.getElementById('wiki-overlay').style.display = 'none';
+        }
+
+        function formatText(text) {
+            let formatted = text;
+            Object.keys(wikiData).forEach(term => {
+                const regex = new RegExp(term, 'g');
+                formatted = formatted.replace(regex, `<span class="term" onclick="event.stopPropagation(); showWiki('${term}')">${term}</span>`);
+            });
+            return formatted;
+        }
+
         function init() {
             Object.keys(ministersData).forEach(name => {
                 const data = ministersData[name];
@@ -179,32 +217,35 @@
                 const div = document.createElement('div');
                 div.className = 'character minister';
                 div.id = `char-${name}`;
-                div.style.setProperty('--pos-px', data.px);
-                div.style.setProperty('--pos-py', data.py);
+                div.style.setProperty('--pos-x', data.px);
+                div.style.setProperty('--pos-y', data.py);
                 div.innerHTML = `<div class="silhouette min-sil"></div><div class="name-tag">${name}</div>`;
                 wing.appendChild(div);
             });
             document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
+            document.getElementById('wiki-close').addEventListener('click', closeWiki);
+            document.getElementById('wiki-overlay').addEventListener('click', closeWiki);
         }
+
         function nextDialogue() {
             currentIndex++;
             if (currentIndex >= dialogue.length) return;
             const entry = dialogue[currentIndex];
             document.getElementById('speaker').innerText = entry.speaker;
-            document.getElementById('speech').innerText = entry.text;
+            document.getElementById('speech').innerHTML = formatText(entry.text);
             document.querySelectorAll('.character').forEach(c => c.classList.remove('active'));
             if (entry.speaker === "上") document.getElementById('char-king').classList.add('active');
             else if (ministersData[entry.speaker]) document.getElementById(`char-${entry.speaker}`).classList.add('active');
+            
             const moodFill = document.getElementById('mood-fill');
-            moodFill.style.width = entry.mood + '%';
-            currentStanceBalance += entry.stance;
+            if (moodFill) moodFill.style.width = (entry.mood || 0) + '%';
+            
+            currentStanceBalance += (entry.stance || 0);
             currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
-            document.getElementById('bar-traditional').style.width = (100 - currentStanceBalance) + '%';
-            document.getElementById('bar-reform').style.width = currentStanceBalance + '%';
-            if (entry.mood >= 95) {
-                document.getElementById('app').classList.add('shake');
-                setTimeout(() => document.getElementById('app').classList.remove('shake'), 400);
-            }
+            const barTrad = document.getElementById('bar-traditional');
+            const barRef = document.getElementById('bar-reform');
+            if (barTrad) barTrad.style.width = (100 - currentStanceBalance) + '%';
+            if (barRef) barRef.style.width = currentStanceBalance + '%';
         }
         window.onload = init;
     </script>
