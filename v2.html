@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>朝廷爭議 V2 - 聲影沉浸版</title>
+    <title>朝廷爭議 V2 - 史料完整版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,48 +18,21 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--paper-white); color: var(--ink-black); font-family: 'Noto Serif TC', serif; overflow: hidden; height: 100vh; }
         
-        /* 音頻控制按鈕 */
-        #audio-toggle {
-            position: fixed; top: 15px; right: 20px; z-index: 100001;
-            background: rgba(0,0,0,0.5); border: 1px solid var(--royal-gold);
-            color: var(--royal-gold); padding: 5px 12px; border-radius: 20px;
-            cursor: pointer; font-size: 0.8rem; font-weight: 900;
-            display: none; transition: all 0.3s;
-        }
-        #audio-toggle:hover { background: var(--royal-gold); color: #000; }
+        #audio-toggle { position: fixed; top: 15px; right: 20px; z-index: 100001; background: rgba(0,0,0,0.5); border: 1px solid var(--royal-gold); color: var(--royal-gold); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 900; display: none; }
 
-        /* 序幕與宮門 */
-        #intro-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 100000; overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .door {
-            position: absolute; top: 0; width: 50vw; height: 100vh;
-            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
-            border: 1px solid rgba(241,196,15,0.1);
-            transition: transform 2.5s cubic-bezier(0.7, 0, 0.3, 1);
-            z-index: 1;
-        }
+        #intro-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .door { position: absolute; top: 0; width: 50vw; height: 100vh; background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); border: 1px solid rgba(241,196,15,0.1); transition: transform 2.5s cubic-bezier(0.7, 0, 0.3, 1); z-index: 1; }
         .door-left { left: 0; border-right: 2px solid var(--royal-gold); }
         .door-right { right: 0; border-left: 2px solid var(--royal-gold); }
         #intro-overlay.open .door-left { transform: translateX(-100%); }
         #intro-overlay.open .door-right { transform: translateX(100%); }
-        #intro-overlay.open { pointer-events: none; }
-
         #intro-content { position: relative; z-index: 2; text-align: center; color: #fff; max-width: 850px; transition: opacity 1s; }
         #intro-overlay.open #intro-content { opacity: 0; }
         .intro-text { font-size: 2.2rem; font-weight: 700; line-height: 2.2; margin-bottom: 25px; opacity: 0; transform: translateY(30px); transition: all 1.2s; }
         .intro-text.visible { opacity: 1; transform: translateY(0); }
-        #start-btn { 
-            margin-top: 60px; padding: 18px 80px; font-size: 1.6rem; font-weight: 900;
-            background: transparent; color: var(--royal-gold); border: 2px solid var(--royal-gold);
-            cursor: pointer; opacity: 0; transition: all 0.6s; letter-spacing: 8px;
-        }
-        #start-btn:hover { background: var(--royal-gold); color: #000; box-shadow: 0 0 40px var(--royal-gold); }
+        #start-btn { margin-top: 60px; padding: 18px 80px; font-size: 1.6rem; font-weight: 900; background: transparent; color: var(--royal-gold); border: 2px solid var(--royal-gold); cursor: pointer; opacity: 0; transition: all 0.6s; letter-spacing: 8px; }
         #start-btn.visible { opacity: 1; }
 
-        /* 主界面層 */
         #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; transform: scale(1.1); filter: blur(5px); transition: all 2.5s cubic-bezier(0.7, 0, 0.3, 1); opacity: 0; }
         #app.visible { transform: scale(1); filter: blur(0); opacity: 1; }
         
@@ -80,8 +53,9 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer; border: 4px solid #fff;
         }
+        .badge-circle:hover { border-color: var(--royal-gold); }
         .royal .badge-circle { width: 130px; height: 130px; background: var(--royal-red); border-color: var(--royal-gold); font-size: 2.2rem; }
-        .character.active .badge-circle { transform: scale(1.2); box-shadow: 0 0 40px rgba(0,0,0,0.3); border-color: var(--royal-gold); z-index: 10; }
+        .character.active .badge-circle { transform: scale(1.2); box-shadow: 0 0 40px rgba(0,0,0,0.3); z-index: 10; border-color: var(--royal-gold); }
         .character.angry .badge-circle { animation: pulse-red 0.5s infinite; background: var(--angry-red) !important; }
         @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 10px var(--angry-red); } 50% { box-shadow: 0 0 40px var(--angry-red); } }
 
@@ -96,7 +70,21 @@
         .speech-text { font-size: 1.9rem; line-height: 1.6; color: #000; font-weight: 700; min-height: 2.4em; }
 
         .controls { display: flex; gap: 20px; width: 100%; max-width: 900px; justify-content: flex-end; }
-        .btn-control { background: #333; color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); }
+        .btn-control { background: #333; color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--gold); transition: transform 0.1s; }
+
+        .term { color: var(--gold); border-bottom: 2px solid var(--gold); cursor: help; font-weight: 900; }
+        
+        /* 百科彈窗樣式 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200000; display: none; }
+        #wiki-modal { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 480px; background: #fff; border-radius: 20px; padding: 40px; 
+            border: 5px solid var(--gold); z-index: 200001; display: none;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.5);
+        }
+        #wiki-title { font-size: 2.2rem; color: var(--gold); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; font-weight: 900; }
+        #wiki-content { font-size: 1.3rem; line-height: 1.8; color: #444; font-weight: 500; }
+        .close-wiki-btn { margin-top: 30px; width: 100%; background: var(--gold); color: #fff; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 900; font-size: 1.1rem; }
 
         .speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, rgba(0,0,0,0.05) 1deg 2deg); z-index: -1; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
         .speed-lines.active { opacity: 1; }
@@ -108,16 +96,11 @@
     </style>
 </head>
 <body>
-    <!-- 音頻資源：史詩感背景音樂 -->
-    <audio id="bgm" loop preload="auto">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bgm" loop preload="auto"><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg"></audio>
     <button id="audio-toggle" onclick="toggleAudio()">音頻：ON</button>
 
-    <!-- 序幕與宮門 -->
     <div id="intro-overlay">
-        <div class="door door-left"></div>
-        <div class="door door-right"></div>
+        <div class="door door-left"></div><div class="door door-right"></div>
         <div id="intro-content">
             <p class="intro-text" id="t1">朝鮮仁祖二十三年（1645年）</p>
             <p class="intro-text" id="t2">歸國不久的昭顯世子暴斃宮中</p>
@@ -135,18 +118,14 @@
         <div class="palace-bg"></div>
         <header class="status-bar">
             <div class="bar-labels"><span>守經 (Traditional)</span><span>擇立 (Reform)</span></div>
-            <div class="stance-container">
-                <div class="stance traditionalists" id="bar-traditional" style="width: 50%;"></div>
-                <div class="stance reformists" id="bar-reform" style="width: 50%;"></div>
-            </div>
+            <div class="stance-container"><div class="stance traditionalists" id="bar-traditional" style="width: 50%;"></div><div class="stance reformists" id="bar-reform" style="width: 50%;"></div></div>
         </header>
-        
         <main class="court-layout" id="main-stage">
             <div class="royal-row">
-                <div class="character royal" id="char-king"><div class="badge-circle">仁祖</div></div>
-                <div class="character royal" id="char-bongnim"><div class="badge-circle">鳳林</div></div>
-                <div class="character royal" id="char-inpyeong"><div class="badge-circle">麟坪</div></div>
-                <div class="character royal" id="char-sesun"><div class="badge-circle">世孫</div></div>
+                <div class="character royal" id="char-仁祖" onclick="showWiki('仁祖')"><div class="badge-circle">仁祖</div></div>
+                <div class="character royal" id="char-鳳林" onclick="showWiki('鳳林')"><div class="badge-circle">鳳林</div></div>
+                <div class="character royal" id="char-麟坪" onclick="showWiki('麟坪')"><div class="badge-circle">麟坪</div></div>
+                <div class="character royal" id="char-世孫" onclick="showWiki('世孫')"><div class="badge-circle">世孫</div></div>
             </div>
             <div class="ministers-floor">
                 <div class="minister-group" id="group-b"><div class="avatars-grid" id="min-b"></div></div>
@@ -158,15 +137,33 @@
                     <div class="speaker-box" id="speaker">宮廷史官</div>
                     <div class="speech-text" id="speech">仁祖二十三年閏六月初二日，大殿會議。</div>
                 </section>
-                <div class="controls">
-                    <button class="btn-control" id="btn-prev" disabled>◀ Back</button>
-                    <button class="btn-control" id="btn-next">Next ▶</button>
-                </div>
+                <div class="controls"><button class="btn-control" id="btn-prev" disabled>◀ Back</button><button class="btn-control" id="btn-next">Next ▶</button></div>
             </div>
         </main>
     </div>
 
+    <!-- 百科彈窗 -->
+    <div class="modal-overlay" id="wiki-overlay" onclick="closeWiki()"></div>
+    <div id="wiki-modal">
+        <h2 id="wiki-title"></h2>
+        <p id="wiki-content"></p>
+        <button class="close-wiki-btn" onclick="closeWiki()">返回辯論現場</button>
+    </div>
+
     <script>
+        const wikiData = {
+            "仁祖": "朝鮮第16代君主。因長子昭顯世子暴斃，欲繞過元孫（長孫），改立次子鳳林大君，引發劇烈宗法爭議。",
+            "元孫": "即昭顯世子之長子。按照『世嫡承統』原則應繼位，但仁祖欲改立鳳林大君。",
+            "世孫": "即元孫。在本文中指昭顯世子之子。",
+            "鳳林": "仁祖次子，後來的朝鮮孝宗。他在瀋陽質留多年，支持北伐。",
+            "麟坪": "仁祖三子。在本次爭論中作為潛在的備選人，但主要傾向於支持父王的決定。",
+            "德宗": "世祖長子懿敬世子。其早逝導致世祖改立次子睿宗（成宗之父），是仁祖引用最重要的歷史先例。",
+            "金瑬": "領議政，西人黨領袖。在本次辯論中持極為謹慎的立場，強調不能輕易行權變之道。",
+            "金自點": "權臣，西人黨元勳。在本次事件中積極揣摩上意，支持仁祖改立鳳林大君。",
+            "洪瑞鳳": "左議政，守經派中堅。堅決主張按照『世嫡承統』的常經辦理，反對改立。",
+            "崔敬輿": "吏曹參判，堅持經常之典，認為人心皆在元孫，改立必招大禍。"
+        };
+
         const dialogue = [
             { speaker: "上", text: "予有宿疾，往往而劇，元孫如彼其微弱. 予觀今日之形勢，不可以待小兒之成長. 未知卿等之意以爲何如？", special: "shake", stance: 5 },
             { speaker: "瑬", text: "朝野方頌岡陵之祝，而殿下遽出此言，臣等罔知所達。", stance: -2 },
@@ -225,85 +222,73 @@
 
         function openPalaceGates() {
             document.getElementById('intro-overlay').classList.add('open');
-            const bgm = document.getElementById('bgm');
-            bgm.play(); // 觸發音樂播放
+            document.getElementById('bgm').play();
             document.getElementById('audio-toggle').style.display = 'block';
             setTimeout(() => document.getElementById('app').classList.add('visible'), 500);
             setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 3000);
         }
 
         function toggleAudio() {
-            const bgm = document.getElementById('bgm');
-            const btn = document.getElementById('audio-toggle');
+            const bgm = document.getElementById('bgm'), btn = document.getElementById('audio-toggle');
             if (bgm.paused) { bgm.play(); btn.innerText = "音頻：ON"; }
             else { bgm.pause(); btn.innerText = "音頻：OFF"; }
         }
 
-        function showIntroTexts() {
-            const texts = document.querySelectorAll('.intro-text');
-            texts.forEach((t, i) => setTimeout(() => t.classList.add('visible'), i * 1500 + 500));
-            setTimeout(() => document.getElementById('start-btn').classList.add('visible'), texts.length * 1500 + 1000);
+        function showWiki(term) {
+            document.getElementById('wiki-title').innerText = term;
+            document.getElementById('wiki-content').innerText = wikiData[term] || "尚無此詞條的詳細記載。";
+            document.getElementById('wiki-modal').style.display = 'block';
+            document.getElementById('wiki-overlay').style.display = 'block';
+        }
+        function closeWiki() { document.getElementById('wiki-modal').style.display = 'none'; document.getElementById('wiki-overlay').style.display = 'none'; }
+        function formatText(text) {
+            let res = text;
+            Object.keys(wikiData).forEach(k => { if(!["仁祖","鳳林","麟坪","世孫"].includes(k)) res = res.replace(new RegExp(k, 'g'), `<span class="term" onclick="event.stopPropagation(); showWiki('${k}')">${k}</span>`); });
+            return res;
         }
 
         let currentIndex = -1, isTyping = false, typingTimer = null, currentStanceBalance = 50;
-        function typeText(element, text) {
-            if (typingTimer) clearInterval(typingTimer);
-            isTyping = true; element.innerHTML = ""; let i = 0;
-            typingTimer = setInterval(() => {
-                if (i < text.length) { element.innerHTML += text.charAt(i); i++; }
-                else { clearInterval(typingTimer); isTyping = false; }
-            }, 30);
-        }
-        function triggerSpecial(type) {
-            const stage = document.getElementById('main-stage'), flash = document.getElementById('flash'), speed = document.getElementById('speed-lines');
-            if (type === "shake") { stage.classList.add('shake-screen'); setTimeout(() => stage.classList.remove('shake-screen'), 400); }
-            else if (type === "flash") { flash.classList.add('flash-active'); setTimeout(() => flash.classList.remove('flash-active'), 300); }
-            else if (type === "speed") { speed.classList.add('active'); setTimeout(() => speed.classList.remove('active'), 1000); }
-        }
         function updateUI() {
             const entry = dialogue[currentIndex];
             document.getElementById('speaker').innerText = entry.speaker;
-            typeText(document.getElementById('speech'), entry.text);
+            if (typingTimer) clearInterval(typingTimer);
+            isTyping = true; document.getElementById('speech').innerHTML = ""; let i = 0;
+            typingTimer = setInterval(() => {
+                if (i < entry.text.length) { document.getElementById('speech').innerHTML += entry.text.charAt(i); i++; }
+                else { clearInterval(typingTimer); document.getElementById('speech').innerHTML = formatText(document.getElementById('speech').innerHTML); isTyping = false; }
+            }, 30);
             if (entry.special) triggerSpecial(entry.special);
             currentStanceBalance += (entry.stance || 0);
             currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
             document.getElementById('bar-traditional').style.width = (100 - currentStanceBalance) + '%';
             document.getElementById('bar-reform').style.width = currentStanceBalance + '%';
             document.querySelectorAll('.character').forEach(c => { c.classList.remove('active'); c.classList.remove('angry'); });
-            let targetId = (entry.speaker === "上") ? 'char-king' : `char-${entry.speaker}`;
+            let targetId = (entry.speaker === "上") ? 'char-仁祖' : `char-${entry.speaker}`;
             if (document.getElementById(targetId)) {
                 const el = document.getElementById(targetId); el.classList.add('active');
                 if (entry.stance >= 12 || entry.special === "shake") el.classList.add('angry');
             }
-            if (entry.text.includes("鳳林")) document.getElementById('char-bongnim').classList.add('active');
-            if (entry.text.includes("麟坪")) document.getElementById('char-inpyeong').classList.add('active');
-            if (entry.text.includes("元孫") || entry.text.includes("世孫")) document.getElementById('char-sesun').classList.add('active');
             document.getElementById('btn-prev').disabled = (currentIndex <= 0);
         }
         function nextDialogue() {
-            if (isTyping) { clearInterval(typingTimer); document.getElementById('speech').innerHTML = dialogue[currentIndex].text; isTyping = false; return; }
+            if (isTyping) { clearInterval(typingTimer); document.getElementById('speech').innerHTML = formatText(dialogue[currentIndex].text); isTyping = false; return; }
             if (currentIndex < dialogue.length - 1) { currentIndex++; updateUI(); }
-        }
-        function prevDialogue() {
-            if (isTyping) clearInterval(typingTimer);
-            if (currentIndex > 0) {
-                currentIndex--; currentStanceBalance = 50;
-                for(let i=0; i<=currentIndex; i++) { currentStanceBalance += (dialogue[i].stance || 0); }
-                currentStanceBalance = Math.max(10, Math.min(90, currentStanceBalance));
-                updateUI();
-            }
         }
         function init() {
             for (let name in ministersData) {
                 const group = ministersData[name], grid = document.getElementById('min-' + group), div = document.createElement('div');
-                div.className = 'character minister'; div.id = `char-${name}`; div.innerHTML = `<div class="badge-circle">${name}</div>`;
-                grid.appendChild(div);
+                div.className = 'character minister'; div.id = `char-${name}`; div.onclick = () => showWiki(name);
+                div.innerHTML = `<div class="badge-circle">${name}</div>`; grid.appendChild(div);
             }
             document.getElementById('dialogue-box').addEventListener('click', nextDialogue);
             document.getElementById('btn-next').addEventListener('click', nextDialogue);
-            document.getElementById('btn-prev').addEventListener('click', (e) => { e.stopPropagation(); prevDialogue(); });
-            window.addEventListener('keydown', (e) => { if (e.code === "Space") { e.preventDefault(); nextDialogue(); } else if (e.code === "ArrowLeft" || e.code === "Backspace") { prevDialogue(); } });
-            showIntroTexts();
+            document.getElementById('btn-prev').addEventListener('click', (e) => { e.stopPropagation(); 
+                if (currentIndex > 0) { currentIndex--; currentStanceBalance = 50; for(let i=0; i<=currentIndex; i++) currentStanceBalance += (dialogue[i].stance || 0); updateUI(); }
+            });
+            window.addEventListener('keydown', (e) => { if (e.code === "Space") { e.preventDefault(); nextDialogue(); } });
+            const texts = document.querySelectorAll('.intro-text');
+            texts.forEach((t, i) => setTimeout(() => t.classList.add('visible'), i * 1500 + 500));
+            setTimeout(() => document.getElementById('start-btn').classList.add('visible'), texts.length * 1500 + 1000);
         }
         window.onload = init;
     </script>
