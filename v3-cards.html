@@ -31,10 +31,10 @@
         }
 
         /* 牌卡系統 */
-        .card-display-area { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; pointer-events: none; z-index: 500; }
+        .card-display-area { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 500; }
 
         .card {
-            position: absolute;
+            position: fixed;
             width: 280px;
             height: 380px;
             background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
@@ -50,6 +50,8 @@
             pointer-events: auto;
             cursor: pointer;
             opacity: 0;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%) scale(0) rotateY(-90deg);
         }
 
@@ -118,13 +120,17 @@
         @keyframes card-fly-in {
             0% {
                 opacity: 0;
-                transform: translate(var(--card-start-x), var(--card-start-y)) scale(0.3) rotateY(-90deg) rotateZ(-20deg);
+                left: var(--card-start-x);
+                top: var(--card-start-y);
+                transform: translate(0, 0) scale(0.3) rotateY(-90deg) rotateZ(-20deg);
             }
             50% {
                 transform: translate(-50%, -50%) scale(1.15) rotateY(15deg) rotateZ(8deg);
             }
             100% {
                 opacity: 1;
+                left: 50%;
+                top: 50%;
                 transform: translate(-50%, -50%) scale(1) rotateY(0deg) rotateZ(0deg);
             }
         }
@@ -476,7 +482,7 @@
                 <div class="card-content">${card.purpose}</div>
             `;
 
-            // 獲取發言者角色位置
+            // 獲取發言者角色位置用於動畫起點
             let startX = window.innerWidth / 2;
             let startY = window.innerHeight / 2;
 
@@ -488,7 +494,7 @@
                 startY = rect.top + rect.height / 2;
             }
 
-            // 設置CSS變量用於動畫起點
+            // 設置CSS變量用於動畫起點（絕對座標）
             cardEl.style.setProperty('--card-start-x', startX + 'px');
             cardEl.style.setProperty('--card-start-y', startY + 'px');
 
@@ -501,17 +507,17 @@
                 cardEl.classList.add('fly-in');
             });
 
-            // 動畫完成後停留
+            // 動畫完成後停留（1秒動畫 + 5秒停留 = 6秒後淡出）
             setTimeout(() => {
                 cardEl.classList.remove('fly-in');
                 cardEl.classList.add('stay');
             }, 1000);
 
-            // 停留3秒後淡出
+            // 停留後淡出（6秒後開始淡出）
             setTimeout(() => {
                 cardEl.classList.add('fade-out');
                 setTimeout(() => { if (displayArea.contains(cardEl)) displayArea.removeChild(cardEl); }, 500);
-            }, 4000);
+            }, 6000);
         }
 
         function updateUI() {
