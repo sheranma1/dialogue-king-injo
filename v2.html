@@ -149,14 +149,20 @@
         }
         .silhouette { background-size: contain; background-repeat: no-repeat; background-position: bottom; image-rendering: pixelated; }
         .king-sil { 
-            background-image: url('injo_real.png'); 
+            background-image: url('characters_sheet.png'); 
             background-color: transparent !important; 
-            background-size: 320% auto; /* 放大以裁剪出特定人物 */
-            background-position: 4% 5%; /* 定位到左側的全身像 */
-            width: 240px; 
-            height: 320px; 
+            background-size: 900% 200%; /* 9列2行 */
+            background-position: 0% 0%; /* 1號仁祖位置 */
+            width: 140px; 
+            height: 200px; 
         }
-        .min-sil { background-image: var(--bg-img); filter: var(--char-filter); width: 80px; height: 80px; }
+        .min-sil { 
+            background-image: url('characters_sheet.png'); 
+            background-size: 900% 200%;
+            background-position: var(--pos-x, 0%) var(--pos-y, 0%);
+            width: 100px; 
+            height: 140px; 
+        }
         .name-tag { margin-top: 5px; font-size: 11px; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 2px 6px; }
 
         .fog-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: linear-gradient(to top, #000, transparent); pointer-events: none; z-index: 5; }
@@ -232,21 +238,21 @@
             { speaker: "史官", text: "時上怒甚，左右皆不敢言。", mood: 100, stance: 0 }
         ];
         const ministersData = {
-            "瑬": { img: 'pixel_minister_old.png', filter: 'hue-rotate(0deg)', faction: 'trad' },
-            "瑞鳳": { img: 'pixel_minister.png', filter: 'hue-rotate(90deg)', faction: 'trad' },
-            "悦": { img: 'pixel_minister.png', filter: 'hue-rotate(0deg)', faction: 'trad' },
-            "自點": { img: 'pixel_minister.png', filter: 'hue-rotate(180deg)', faction: 'reform' },
-            "敬輿": { img: 'pixel_minister_old.png', filter: 'brightness(0.7)', faction: 'trad' },
-            "德泂": { img: 'pixel_minister.png', filter: 'hue-rotate(240deg)', faction: 'trad' },
-            "仁垕": { img: 'pixel_minister.png', filter: 'contrast(1.4)', faction: 'reform' },
-            "時白": { img: 'pixel_minister_old.png', filter: 'sepia(0.6)', faction: 'trad' },
-            "景奭": { img: 'pixel_minister.png', filter: 'grayscale(0.6)', faction: 'trad' },
-            "植": { img: 'pixel_minister_old.png', filter: 'hue-rotate(300deg)', faction: 'trad' },
-            "壽賢": { img: 'pixel_minister.png', filter: 'hue-rotate(120deg)', faction: 'reform' },
-            "堉": { img: 'pixel_minister_old.png', filter: 'brightness(1.4)', faction: 'trad' },
-            "太和": { img: 'pixel_minister.png', filter: 'hue-rotate(60deg)', faction: 'trad' },
-            "楘": { img: 'pixel_minister_old.png', filter: 'invert(0.1)', faction: 'trad' },
-            "爾徵": { img: 'pixel_minister_old.png', filter: 'hue-rotate(150deg)', faction: 'trad' }
+            "瑬": { px: '12.5%', py: '0%', faction: 'trad' },
+            "瑞鳳": { px: '25%', py: '0%', faction: 'trad' },
+            "悦": { px: '37.5%', py: '0%', faction: 'trad' },
+            "自點": { px: '50%', py: '0%', faction: 'reform' },
+            "敬輿": { px: '62.5%', py: '0%', faction: 'trad' },
+            "德泂": { px: '37.5%', py: '100%', faction: 'trad' },
+            "仁垕": { px: '50%', py: '100%', faction: 'reform' },
+            "時白": { px: '62.5%', py: '100%', faction: 'trad' },
+            "景奭": { px: '75%', py: '100%', faction: 'trad' },
+            "植": { px: '75%', py: '0%', faction: 'trad' },
+            "壽賢": { px: '87.5%', py: '0%', faction: 'reform' },
+            "堉": { px: '100%', py: '0%', faction: 'trad' },
+            "太和": { px: '0%', py: '100%', faction: 'trad' },
+            "楘": { px: '100%', py: '100%', faction: 'trad' },
+            "爾徵": { px: '25%', py: '100%', faction: 'trad' }
         };
         let currentIndex = -1;
         let currentStanceBalance = 50; 
@@ -258,8 +264,8 @@
                 const div = document.createElement('div');
                 div.className = 'character minister';
                 div.id = `char-${name}`;
-                div.style.setProperty('--bg-img', `url('${data.img}')`);
-                div.style.setProperty('--char-filter', data.filter);
+                div.style.setProperty('--pos-x', data.px);
+                div.style.setProperty('--pos-y', data.py);
                 div.innerHTML = `<div class="silhouette min-sil"></div><div class="name-tag">${name}</div>`;
                 if (data.faction === 'trad') leftWing.appendChild(div);
                 else rightWing.appendChild(div);

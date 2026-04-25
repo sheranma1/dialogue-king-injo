@@ -62,21 +62,21 @@ const traditionalists = ["瑬", "瑞鳳", "悦", "敬輿", "景奭", "植", "堉
 const reformists = ["自點", "仁垕", "壽賢"]; // 權變或傾向王意者
 
 const ministersData = {
-    "瑬": { img: 'pixel_minister_old.png', filter: 'hue-rotate(0deg)', faction: 'trad' },
-    "瑞鳳": { img: 'pixel_minister.png', filter: 'hue-rotate(90deg)', faction: 'trad' },
-    "悦": { img: 'pixel_minister.png', filter: 'hue-rotate(0deg)', faction: 'trad' },
-    "自點": { img: 'pixel_minister.png', filter: 'hue-rotate(180deg)', faction: 'reform' },
-    "敬輿": { img: 'pixel_minister_old.png', filter: 'brightness(0.7)', faction: 'trad' },
-    "德泂": { img: 'pixel_minister.png', filter: 'hue-rotate(240deg)', faction: 'trad' },
-    "仁垕": { img: 'pixel_minister.png', filter: 'contrast(1.4)', faction: 'reform' },
-    "時白": { img: 'pixel_minister_old.png', filter: 'sepia(0.6)', faction: 'trad' },
-    "景奭": { img: 'pixel_minister.png', filter: 'grayscale(0.6)', faction: 'trad' },
-    "植": { img: 'pixel_minister_old.png', filter: 'hue-rotate(300deg)', faction: 'trad' },
-    "壽賢": { img: 'pixel_minister.png', filter: 'hue-rotate(120deg)', faction: 'reform' },
-    "堉": { img: 'pixel_minister_old.png', filter: 'brightness(1.4)', faction: 'trad' },
-    "太和": { img: 'pixel_minister.png', filter: 'hue-rotate(60deg)', faction: 'trad' },
-    "楘": { img: 'pixel_minister_old.png', filter: 'invert(0.1)', faction: 'trad' },
-    "爾徵": { img: 'pixel_minister_old.png', filter: 'hue-rotate(150deg)', faction: 'trad' }
+    "瑬": { px: '12.5%', py: '0%', faction: 'trad' },
+    "瑞鳳": { px: '25%', py: '0%', faction: 'trad' },
+    "悦": { px: '37.5%', py: '0%', faction: 'trad' },
+    "自點": { px: '50%', py: '0%', faction: 'reform' },
+    "敬輿": { px: '62.5%', py: '0%', faction: 'trad' },
+    "德泂": { px: '37.5%', py: '100%', faction: 'trad' },
+    "仁垕": { px: '50%', py: '100%', faction: 'reform' },
+    "時白": { px: '62.5%', py: '100%', faction: 'trad' },
+    "景奭": { px: '75%', py: '100%', faction: 'trad' },
+    "植": { px: '75%', py: '0%', faction: 'trad' },
+    "壽賢": { px: '87.5%', py: '0%', faction: 'reform' },
+    "堉": { px: '100%', py: '0%', faction: 'trad' },
+    "太和": { px: '0%', py: '100%', faction: 'trad' },
+    "楘": { px: '100%', py: '100%', faction: 'trad' },
+    "爾徵": { px: '25%', py: '100%', faction: 'trad' }
 };
 
 function init() {
@@ -90,8 +90,8 @@ function init() {
         const div = document.createElement('div');
         div.className = 'character minister';
         div.id = `char-${name}`;
-        div.style.setProperty('--bg-img', `url('${data.img}')`);
-        div.style.setProperty('--char-filter', data.filter);
+        div.style.setProperty('--pos-x', data.px);
+        div.style.setProperty('--pos-y', data.py);
         div.innerHTML = `<div class="silhouette min-sil"></div><div class="name-tag">${name}</div>`;
         
         if (data.faction === 'trad') leftWing.appendChild(div);
