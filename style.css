@@ -178,7 +178,8 @@ body {
 }
 
 .king-sil {
-    background-image: url('pixel_king.png');
+    background-image: url('king_final_v2.png');
+    background-color: transparent !important;
     filter: saturate(0.8) contrast(1.1) brightness(0.9);
     width: 250px;
     height: 250px;
