@@ -31,7 +31,7 @@
         }
 
         /* 牌卡系統 */
-        .card-display-area { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); width: 90%; height: 400px; pointer-events: none; z-index: 500; }
+        .card-display-area { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; pointer-events: none; z-index: 500; }
 
         .card {
             position: absolute;
@@ -51,7 +51,6 @@
             cursor: pointer;
             opacity: 0;
             transform: translate(-50%, -50%) scale(0) rotateY(-90deg);
-            animation: card-appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
         .card.trad-card {
@@ -64,62 +63,70 @@
             background: linear-gradient(135deg, rgba(160, 40, 40, 0.3), rgba(80, 20, 20, 0.3)), linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
         }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--royal-gold);
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+        .card.fly-in {
+            animation: card-fly-in 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        .card-speaker {
-            font-size: 1.2rem;
+        .card.stay {
+            animation: none;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+        }
+
+        .card-header {
+            border-bottom: 2px solid var(--royal-gold);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-player {
+            font-size: 1.3rem;
             color: var(--royal-gold);
-            letter-spacing: 3px;
+            letter-spacing: 4px;
+            font-weight: 900;
         }
 
         .card-power {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 900;
-            text-align: center;
             min-width: 50px;
+            text-align: right;
         }
 
         .card-power.positive { color: #2ecc71; }
         .card-power.negative { color: #e74c3c; }
 
         .card-title {
-            font-size: 1.1rem;
-            color: var(--royal-gold);
-            margin-bottom: 12px;
-            letter-spacing: 2px;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
             text-align: center;
-            line-height: 1.4;
+            line-height: 1.6;
+            font-weight: 900;
         }
 
         .card-content {
             flex: 1;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            font-size: 1rem;
+            line-height: 1.8;
             color: #ddd;
             overflow-y: auto;
-            margin-bottom: 15px;
             text-align: center;
         }
 
-        .card-footer {
-            border-top: 1px solid rgba(241, 196, 15, 0.3);
-            padding-top: 10px;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #999;
-        }
-
-        @keyframes card-appear {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotateY(-90deg) rotateZ(-15deg); }
-            50% { transform: translate(-50%, -50%) scale(1.1) rotateY(10deg) rotateZ(5deg); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotateY(0deg) rotateZ(0deg); }
+        @keyframes card-fly-in {
+            0% {
+                opacity: 0;
+                transform: translate(var(--card-start-x), var(--card-start-y)) scale(0.3) rotateY(-90deg) rotateZ(-20deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.15) rotateY(15deg) rotateZ(8deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotateY(0deg) rotateZ(0deg);
+            }
         }
 
         @keyframes card-fade-out {
@@ -127,7 +134,7 @@
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) translateY(100px); }
         }
 
-        .card.fade-out { animation: card-fade-out 0.4s ease-out forwards; }
+        .card.fade-out { animation: card-fade-out 0.5s ease-out forwards; }
 
         /* 其餘保持v2原樣 */
         .audio-controls { position: fixed; top: 15px; right: 20px; z-index: 100001; background: rgba(0,0,0,0.8); border: 2px solid var(--royal-gold); padding: 10px 20px; border-radius: 30px; display: none; align-items: center; gap: 15px; }
@@ -318,34 +325,34 @@
     <script>
         // 牌卡數據 - 映射到對話
         const cardData = {
-            0: { name: "疾病憂國", power: 5, faction: "reform" },
-            1: { name: "驚惶難措", power: -2, faction: "trad" },
-            2: { name: "幼君危機", power: 8, faction: "reform" },
-            3: { name: "請教群臣", power: -2, faction: "trad" },
-            4: { name: "常經不易", power: -10, faction: "trad" },
-            5: { name: "長君之福", power: 5, faction: "reform" },
-            6: { name: "微恙可忍", power: -6, faction: "trad" },
-            7: { name: "深思熟慮", power: 3, faction: "reform" },
-            8: { name: "朝野波蕩", power: -12, faction: "trad" },
-            9: { name: "古例為證", power: 10, faction: "reform" },
-            10: { name: "領相決之", power: 10, faction: "reform" },
-            11: { name: "難以獨斷", power: -5, faction: "trad" },
-            12: { name: "大臣責任", power: 8, faction: "reform" },
-            13: { name: "光廟建儲", power: -5, faction: "trad" },
-            14: { name: "月山質弱", power: 3, faction: "reform" },
-            15: { name: "年歲差異", power: -2, faction: "trad" },
-            16: { name: "變通之道", power: 12, faction: "reform" },
-            17: { name: "聖人深謀", power: -3, faction: "trad" },
-            18: { name: "亂世長君", power: 10, faction: "reform" },
-            19: { name: "既無異議", power: -5, faction: "trad" },
-            20: { name: "擇賢而立", power: 5, faction: "reform" },
-            21: { name: "知子莫如父", power: 5, faction: "trad" },
-            22: { name: "二人皆劣", power: 12, faction: "reform" },
-            23: { name: "嫡長之序", power: 10, faction: "reform" },
-            24: { name: "國本存亡", power: 10, faction: "reform" },
-            25: { name: "明白下教", power: 5, faction: "reform" },
-            26: { name: "立鳳林為世子", power: 20, faction: "reform" },
-            27: { name: "承傳之禮", power: 5, faction: "reform" },
+            0: { name: "疾病憂國", purpose: "製造緊急性：我快不行了，不能等", power: 5, faction: "reform" },
+            1: { name: "驚惶難措", purpose: "表示震驚反對", power: -2, faction: "trad" },
+            2: { name: "幼君危機", purpose: "強調元孫太幼弱無法擔當", power: 8, faction: "reform" },
+            3: { name: "請教群臣", purpose: "把決定權交給大臣們", power: -2, faction: "trad" },
+            4: { name: "常經不易", purpose: "守經派主張遵循嫡長制傳統", power: -10, faction: "trad" },
+            5: { name: "長君之福", purpose: "長君能保護國家", power: 5, faction: "reform" },
+            6: { name: "微恙可忍", purpose: "父親身體無礙，元孫已十歲", power: -6, faction: "trad" },
+            7: { name: "深思熟慮", purpose: "支持仁祖，要求快速決定", power: 3, faction: "reform" },
+            8: { name: "朝野波蕩", purpose: "改立會造成人心混亂", power: -12, faction: "trad" },
+            9: { name: "古例為證", purpose: "世祖曾改立睿宗，有先例", power: 10, faction: "reform" },
+            10: { name: "領相決之", purpose: "仁祖威壓金瑬做決定", power: 10, faction: "reform" },
+            11: { name: "難以獨斷", purpose: "領相也不敢獨斷此大事", power: -5, faction: "trad" },
+            12: { name: "大臣責任", purpose: "大臣應該為國家擔當責任", power: 8, faction: "reform" },
+            13: { name: "光廟建儲", purpose: "查證光海君時期的先例", power: -5, faction: "trad" },
+            14: { name: "月山質弱", purpose: "月山大君也不聰慧", power: 3, faction: "reform" },
+            15: { name: "年歲差異", purpose: "核實各君主即位時的年紀", power: -2, faction: "trad" },
+            16: { name: "變通之道", purpose: "時勢變通，非常之舉是必要的", power: 12, faction: "reform" },
+            17: { name: "聖人深謀", purpose: "世祖的深思是不可測量的", power: -3, faction: "trad" },
+            18: { name: "亂世長君", purpose: "亂世需要長君來鎮定", power: 10, faction: "reform" },
+            19: { name: "既無異議", purpose: "群臣已無異議", power: -5, faction: "trad" },
+            20: { name: "擇賢而立", purpose: "既然嗣子無人，就擇賢而立", power: 5, faction: "reform" },
+            21: { name: "知子莫如父", purpose: "只有父親最了解兒子", power: 5, faction: "trad" },
+            22: { name: "二人皆劣", purpose: "兩位大君都有缺點，只能立長", power: 12, faction: "reform" },
+            23: { name: "嫡長之序", purpose: "立長才是順序", power: 10, faction: "reform" },
+            24: { name: "國本存亡", purpose: "清朝使臣將來會質問國本", power: 10, faction: "reform" },
+            25: { name: "明白下教", purpose: "需要明確的聖旨使群臣知曉", power: 5, faction: "reform" },
+            26: { name: "立鳳林為世子", purpose: "最終決定：立鳳林大君為世子", power: 20, faction: "reform" },
+            27: { name: "承傳之禮", purpose: "詢問是否需要承傳儀式", power: 5, faction: "reform" },
         };
 
         const wikiData = {
@@ -458,25 +465,56 @@
             const powerClass = card.power > 0 ? 'positive' : 'negative';
             const powerSign = card.power > 0 ? '+' : '';
 
+            const powerClass = card.power > 0 ? 'positive' : 'negative';
+            const powerSign = card.power > 0 ? '+' : '';
+
             cardEl.innerHTML = `
                 <div class="card-header">
-                    <div class="card-speaker">${speaker}</div>
-                    <div class="card-power ${powerClass}">${powerSign}${card.power}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="card-player">${speaker}</div>
+                        <div class="card-power ${powerClass}">${powerSign}${card.power}</div>
+                    </div>
                 </div>
                 <div class="card-title">${card.name}</div>
-                <div class="card-content">${dialogue[index].text.substring(0, 100)}...</div>
-                <div class="card-footer">${card.faction === 'trad' ? '守經派' : '擇立派'}</div>
+                <div class="card-content">${card.purpose}</div>
             `;
+
+            // 獲取發言者角色位置
+            let startX = window.innerWidth / 2;
+            let startY = window.innerHeight / 2;
+
+            const speakerId = speaker === "上" ? 'char-仁祖' : `char-${speaker}`;
+            const speakerEl = document.getElementById(speakerId);
+            if (speakerEl) {
+                const rect = speakerEl.getBoundingClientRect();
+                startX = rect.left + rect.width / 2;
+                startY = rect.top + rect.height / 2;
+            }
+
+            // 設置CSS變量用於動畫起點
+            cardEl.style.setProperty('--card-start-x', startX + 'px');
+            cardEl.style.setProperty('--card-start-y', startY + 'px');
 
             const displayArea = document.getElementById('card-display-area');
             displayArea.innerHTML = '';
             displayArea.appendChild(cardEl);
 
-            // 卡牌淡出
+            // 觸發飛入動畫
+            requestAnimationFrame(() => {
+                cardEl.classList.add('fly-in');
+            });
+
+            // 動畫完成後停留
+            setTimeout(() => {
+                cardEl.classList.remove('fly-in');
+                cardEl.classList.add('stay');
+            }, 1000);
+
+            // 停留3秒後淡出
             setTimeout(() => {
                 cardEl.classList.add('fade-out');
-                setTimeout(() => { if (displayArea.contains(cardEl)) displayArea.removeChild(cardEl); }, 400);
-            }, 2500);
+                setTimeout(() => { if (displayArea.contains(cardEl)) displayArea.removeChild(cardEl); }, 500);
+            }, 4000);
         }
 
         function updateUI() {
